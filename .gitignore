@@ -1,0 +1,32 @@
+# Exclure la base de données SQLite
+db.sqlite3
+
+# Exclure les environnements virtuels
+venv/
+.env/
+.venv/
+
+# Exclure les paramètres d'environnement
+*.env
+
+# Exclure les caches Python
+__pycache__/
+*.py[cod]
+
+# Exclure les fichiers de migration générés
+**/migrations/000*.py
+**/migrations/__pycache__/
+
+# Exclure les logs et fichiers temporaires
+*.log
+*.tmp
+
+# Exclure les fichiers des éditeurs et IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Exclure les fichiers spécifiques aux systèmes d'exploitation
+.DS_Store
+Thumbs.db
