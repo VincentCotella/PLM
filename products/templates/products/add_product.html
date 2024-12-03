@@ -18,7 +18,7 @@
                 </ul>
             </div>
         {% endif %}
-        <form method="post" novalidate>
+        <form method="post" enctype="multipart/form-data" novalidate>
             {% csrf_token %}
             <!-- Product Name -->
             <div class="mb-4">
@@ -47,6 +47,16 @@
                        class="block text-gray-700 font-medium mb-2">Créé Par</label>
                 {{ form.created_by }}
                 {% if form.created_by.errors %}<p class="text-red-500 text-sm mt-1">{{ form.created_by.errors }}</p>{% endif %}
+            </div>
+            <!-- STL File URL field -->
+            <div class="mb-4">
+                <label for="{{ form.stl_file.id_for_label }}"
+                       class="block text-gray-700 font-medium mb-2">STL File URL (Google Drive)</label>
+                {{ form.stl_file }}
+                <p class="text-sm text-gray-500 mt-1">Enter the Google Drive file ID for the STL file</p>
+                {% if form.stl_file.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.stl_file.errors }}</p>
+                {% endif %}
             </div>
             <!-- Add other form fields similarly if any -->
             <div class="flex items-center justify-between mt-6">

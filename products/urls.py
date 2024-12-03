@@ -12,4 +12,6 @@ urlpatterns = [
     path('products/<int:product_id>/', views.product_detail, name='product_detail'),  # Détail du produit
     path('add/', views.add_product, name='add_product'),  # Formulaire pour ajouter un produit
     path('generate_report/', views.generate_report, name='generate_report'),  # Ajoutez cette ligne
+    path('products/<int:product_id>/stl/', views.view_stl, name='view_stl'),
+    path('stl-proxy/<str:file_id>/', views.proxy_stl, name='proxy_stl'),
 ]

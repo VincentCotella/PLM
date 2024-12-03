@@ -1,5 +1,35 @@
+# MGO PLM System
 
-# MGO PLM System - Documentation
+A Product Lifecycle Management system for MGO.
+
+## Features
+
+- Product management with detailed information
+- Product range categorization
+- User authentication and authorization
+- 3D Model Visualization (STL files)
+- Search functionality
+- Responsive design
+
+## 3D Model Support
+
+The system supports viewing 3D models in STL format. To add a 3D model to a product:
+
+1. Upload your STL file to Google Drive
+2. Make the file publicly accessible
+3. Copy the file ID from the sharing URL
+   - Example URL: `https://drive.google.com/file/d/1HgWFA398Auu0PerCeZhuFcgeKFLZGmGQ/view`
+   - File ID: `1HgWFA398Auu0PerCeZhuFcgeKFLZGmGQ`
+4. Add the file ID when creating or editing a product
+
+### 3D Viewer Features
+- Interactive rotation, pan, and zoom
+- Auto-centering of models
+- Reset view functionality
+- Download option for STL files
+- Progress indicator during loading
+
+## Installation
 
 ## Table des Matières
 1. [Aperçu du Projet](#aperçu-du-projet)
@@ -54,30 +84,6 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants installés :
 - Django 5.0.1
 - `pip` (Python Package Installer)
 - `virtualenv` (recommandé)
-
-## Installation
-Suivez ces étapes pour installer le projet localement :
-
-1. Clonez ce dépôt :
-
-   ```bash
-   git clone https://votre-repo.git
-   cd PLM
-   ```
-
-2. Créez et activez un environnement virtuel :
-
-   ```bash
-   python -m venv venv
-   source venv/bin/activate   # Sur Linux/Mac
-   venv\Scripts\activate    # Sur Windows
-   ```
-
-3. Installez les dépendances :
-
-   ```bash
-   pip install -r requirements.txt
-   ```
 
 ## Configuration de l'Environnement
 Avant de lancer le projet, ajoutez la clé secrète et configurez la base de données dans `plm_project/settings.py` si nécessaire :

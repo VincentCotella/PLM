@@ -8,6 +8,9 @@ from django.shortcuts import redirect
 from django.views import View
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+from django.conf import settings
+import requests
+from django.views.decorators.http import require_http_methods
 
 @login_required
 def dashboard(request):
@@ -87,3 +90,36 @@ class CustomLogoutView(View):
     def get(self, request):
         logout(request)  # Ensure the user is logged out on GET requests
         return redirect('/')  # Redirect to homepage after logout
+
+@login_required
+def view_stl(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    context = {
+        'product': product,
+        'debug': settings.DEBUG
+    }
+    return render(request, 'products/stl_viewer.html', context)
+
+@require_http_methods(["GET"])
+def proxy_stl(request, file_id):
+    # Google Drive direct download URL
+    url = f'https://drive.google.com/uc?export=download&id={file_id}'
+    
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Raises an HTTPError for bad responses
+        
+        # Return the file content with appropriate headers
+        return HttpResponse(
+            response.content,
+            content_type='application/octet-stream',
+            headers={
+                'Content-Disposition': 'attachment; filename="model.stl"',
+                'Access-Control-Allow-Origin': '*',
+            }
+        )
+    except Exception as e:
+        return HttpResponse(
+            f"Error fetching STL file: {str(e)}",
+            status=500
+        )

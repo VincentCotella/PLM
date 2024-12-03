@@ -1,0 +1,200 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-bold mb-4">{{ product.name }} - 3D View</h2>
+        
+        {% if product.stl_file %}
+            <!-- Controls instructions -->
+            <div class="mb-4 text-sm text-gray-600">
+                <p>Controls: Left click + drag to rotate | Right click + drag to pan | Scroll to zoom</p>
+            </div>
+            
+            <div id="stl-viewer-container" style="width: 100%; height: 500px; border: 1px solid #ccc; background-color: #f3f4f6;">
+                <!-- Loading indicator -->
+                <div id="loading-indicator" class="flex items-center justify-center h-full">
+                    <p class="text-gray-600">Loading 3D model...</p>
+                </div>
+            </div>
+            
+            <div class="mt-4 flex justify-between items-center">
+                <div class="flex gap-4">
+                    <button id="reset-camera" 
+                            class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                        Reset View
+                    </button>
+                    <a href="{{ product.stl_file.url }}" 
+                       class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                       download>
+                        Download STL
+                    </a>
+                </div>
+                <a href="{% url 'products:product_detail' product.id %}" 
+                   class="text-gray-600 hover:text-gray-800">
+                    Back to Product Details
+                </a>
+            </div>
+        {% else %}
+            <p class="text-gray-600">No STL file available for this product.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% if product.stl_file %}
+    <!-- Three.js and STL loader -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
+    <script>
+        // Global variables
+        let camera, scene, renderer, controls, mesh;
+        const container = document.getElementById('stl-viewer-container');
+        
+        // Initialize scene
+        function init() {
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf3f4f6); // Light gray background
+            
+            // Camera setup
+            const aspect = container.clientWidth / container.clientHeight;
+            camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
+            camera.position.set(0, 0, 5);
+            
+            // Renderer setup
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.innerHTML = ''; // Clear loading indicator
+            container.appendChild(renderer.domElement);
+            
+            // Lighting setup
+            setupLighting();
+            
+            // Controls setup
+            setupControls();
+            
+            // Load STL file
+            loadSTL();
+            
+            // Add event listeners
+            window.addEventListener('resize', onWindowResize, false);
+            document.getElementById('reset-camera').addEventListener('click', resetCamera);
+        }
+        
+        function setupLighting() {
+            // Ambient light
+            const ambientLight = new THREE.AmbientLight(0x404040, 2);
+            scene.add(ambientLight);
+            
+            // Directional lights
+            const lights = [
+                { position: [1, 1, 1], intensity: 1 },
+                { position: [-1, -1, -1], intensity: 0.5 },
+                { position: [1, -1, 1], intensity: 0.8 }
+            ];
+            
+            lights.forEach(light => {
+                const directionalLight = new THREE.DirectionalLight(0xffffff, light.intensity);
+                directionalLight.position.set(...light.position);
+                scene.add(directionalLight);
+            });
+        }
+        
+        function setupControls() {
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.screenSpacePanning = true;
+            controls.minDistance = 1;
+            controls.maxDistance = 50;
+            controls.maxPolarAngle = Math.PI; // Allow full vertical rotation
+        }
+        
+        function loadSTL() {
+            const loader = new THREE.STLLoader();
+            // Extract file ID from the Google Drive URL
+            const fileId = '1HgWFA398Auu0PerCeZhuFcgeKFLZGmGQ';
+            const proxyUrl = `{% url 'products:proxy_stl' '1HgWFA398Auu0PerCeZhuFcgeKFLZGmGQ' %}`;
+            
+            loader.load(
+                proxyUrl,
+                function (geometry) {
+                    const material = new THREE.MeshPhongMaterial({
+                        color: 0x3b82f6,
+                        specular: 0x111111,
+                        shininess: 200,
+                        side: THREE.DoubleSide
+                    });
+                    
+                    mesh = new THREE.Mesh(geometry, material);
+                    
+                    // Center the model
+                    geometry.computeBoundingBox();
+                    const center = geometry.boundingBox.getCenter(new THREE.Vector3());
+                    mesh.position.sub(center);
+                    
+                    scene.add(mesh);
+                    
+                    // Adjust camera to fit model
+                    fitCameraToObject();
+                },
+                // Progress callback
+                function (xhr) {
+                    const percent = (xhr.loaded / xhr.total * 100).toFixed(0);
+                    const loadingIndicator = document.getElementById('loading-indicator');
+                    if (loadingIndicator) {
+                        loadingIndicator.innerHTML = `Loading: ${percent}%`;
+                    }
+                },
+                // Error callback
+                function (error) {
+                    console.error('Error loading STL:', error);
+                    container.innerHTML = '<p class="text-red-500 p-4">Error loading STL file. Please try again later.</p>';
+                }
+            );
+        }
+        
+        function fitCameraToObject() {
+            const boundingBox = new THREE.Box3().setFromObject(mesh);
+            const center = boundingBox.getCenter(new THREE.Vector3());
+            const size = boundingBox.getSize(new THREE.Vector3());
+            
+            // Get the max side of the bounding box
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const fov = camera.fov * (Math.PI / 180);
+            let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
+            
+            // Set camera position and target
+            camera.position.z = cameraZ * 1.5; // Add some padding
+            controls.target.copy(center);
+            controls.update();
+        }
+        
+        function resetCamera() {
+            if (mesh) {
+                fitCameraToObject();
+            }
+        }
+        
+        function onWindowResize() {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        
+        // Start the viewer
+        init();
+        animate();
+    </script>
+{% endif %}
+{% endblock %} 

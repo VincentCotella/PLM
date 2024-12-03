@@ -42,6 +42,12 @@ class Product(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    stl_file = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
+        help_text="Google Drive file ID for the STL file"
+    )
     
     def save(self, *args, **kwargs):
         # Générer la référence si elle n'existe pas
