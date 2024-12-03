@@ -30,6 +30,14 @@
         <p>
             <strong>Mis à jour le :</strong> {{ product.updated_at }}
         </p>
+        <p>
+            <strong>Site de Production :</strong> 
+            {% if product.site %}
+                {{ product.site.name }} ({{ product.site.get_location_display }})
+            {% else %}
+                Non assigné
+            {% endif %}
+        </p>
         <div class="mt-6 flex gap-4">
             {% if product.stl_file %}
                 <a href="{% url 'products:view_stl' product.id %}" 

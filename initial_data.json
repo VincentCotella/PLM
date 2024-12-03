@@ -32,5 +32,41 @@
             "description": "Must be certified organic and free from GMOs.",
             "priority": "H"
         }
+    },
+    {
+        "model": "products.site",
+        "pk": 1,
+        "fields": {
+            "name": "MGO France",
+            "location": "FR",
+            "capacity": 10000
+        }
+    },
+    {
+        "model": "products.site",
+        "pk": 2,
+        "fields": {
+            "name": "MGO Belgium",
+            "location": "BE",
+            "capacity": 8000
+        }
+    },
+    {
+        "model": "products.site",
+        "pk": 3,
+        "fields": {
+            "name": "MGO Asia",
+            "location": "AS",
+            "capacity": 15000
+        }
+    },
+    {
+        "model": "products.site",
+        "pk": 4,
+        "fields": {
+            "name": "MGO Africa",
+            "location": "AF",
+            "capacity": 5000
+        }
     }
 ]
