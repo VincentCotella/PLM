@@ -3,7 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from .models import Product, ProductRange, Site, Project, ModificationHistory
 from .forms import ProductForm
+from django.contrib.auth import logout
 from django.shortcuts import redirect
+from django.views import View
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 
 @login_required
 def dashboard(request):
@@ -11,26 +15,37 @@ def dashboard(request):
     ranges = ProductRange.objects.all()
     sites = Site.objects.all()
     projects = Project.objects.all()
-    modifications = ModificationHistory.objects.all()
+    modification_history = ModificationHistory.objects.all()
 
-    # Récupérer les widgets sélectionnés depuis l'URL ou utiliser la liste par défaut
-    selected_widgets = request.GET.getlist('widgets', [
-        'overview', 'product_ranges', 'production_sites', 'product_categories',
-        'recent_modifications', 'active_projects', 'cost_simulations',
-        'modification_history', 'generate_report'
-    ])
+    # Serialize QuerySets into lists of dictionaries
+    agrifood_products_data = list(
+        products.filter(product_range__category='AG').values('id', 'name')
+    )
+    perfumery_products_data = list(
+        products.filter(product_range__category='PE').values('id', 'name')
+    )
+
+    cost_simulations_data = []
+    for product in products:
+        simulations = product.cost_simulations.all()
+        for simulation in simulations:
+            cost_simulations_data.append({
+                'product_name': product.name,
+                'calculated_price': float(simulation.calculated_price),
+            })
 
     context = {
         'products': products,
         'ranges': ranges,
         'sites': sites,
         'projects': projects,
-        'agrifood_products': products.filter(product_range__category='AG'),
-        'perfumery_products': products.filter(product_range__category='PE'),
-        'modification_history': modifications,
-        'selected_widgets': selected_widgets
+        'agrifood_products_data': json.dumps(agrifood_products_data, cls=DjangoJSONEncoder),
+        'perfumery_products_data': json.dumps(perfumery_products_data, cls=DjangoJSONEncoder),
+        'cost_simulations_data': json.dumps(cost_simulations_data, cls=DjangoJSONEncoder),
+        'modification_history': modification_history,
     }
     return render(request, 'products/dashboard.html', context)
+
 
 
 @login_required
@@ -61,3 +76,14 @@ def add_product(request):
     else:
         form = ProductForm()
     return render(request, 'products/add_product.html', {'form': form})
+
+from django.contrib.auth.views import LogoutView
+
+class CustomLogoutView(View):
+    def post(self, request):
+        logout(request)
+        return redirect('/')  # Redirect to homepage after logout
+
+    def get(self, request):
+        logout(request)  # Ensure the user is logged out on GET requests
+        return redirect('/')  # Redirect to homepage after logout

@@ -1,15 +1,68 @@
 {% extends 'products/base.html' %}
-
 {% block title %}Ajouter un Produit{% endblock %}
-
 {% block content %}
-<div class="max-w-xl mx-auto mt-10 p-4 bg-white shadow-md rounded">
-    <h2 class="text-2xl font-bold mb-4">Ajouter un Nouveau Produit</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Ajouter le Produit</button>
-    </form>
-    <a href="{% url 'products:product_list' %}" class="btn btn-secondary mt-4">Retour à la liste des produits</a>
-</div>
+    <div class="max-w-xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+        <h2 class="text-3xl font-semibold mb-6 text-center text-gray-800">Ajouter un Nouveau Produit</h2>
+        <!-- Display Form Errors -->
+        {% if form.errors %}
+            <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                <ul class="list-disc pl-5">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>
+                                <strong>{{ field.label }}:</strong> {{ error }}
+                            </li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <!-- Product Name -->
+            <div class="mb-4">
+                <label for="{{ form.name.id_for_label }}"
+                       class="block text-gray-700 font-medium mb-2">Nom du Produit</label>
+                {{ form.name }}
+                {% if form.name.errors %}<p class="text-red-500 text-sm mt-1">{{ form.name.errors }}</p>{% endif %}
+            </div>
+            <!-- Reference -->
+            <div class="mb-4">
+                <label for="{{ form.reference.id_for_label }}"
+                       class="block text-gray-700 font-medium mb-2">Référence</label>
+                {{ form.reference }}
+                {% if form.reference.errors %}<p class="text-red-500 text-sm mt-1">{{ form.reference.errors }}</p>{% endif %}
+            </div>
+            <!-- Product Range -->
+            <div class="mb-4">
+                <label for="{{ form.product_range.id_for_label }}"
+                       class="block text-gray-700 font-medium mb-2">Gamme de Produit</label>
+                {{ form.product_range }}
+                {% if form.product_range.errors %}<p class="text-red-500 text-sm mt-1">{{ form.product_range.errors }}</p>{% endif %}
+            </div>
+            <!-- Created By -->
+            <div class="mb-4">
+                <label for="{{ form.created_by.id_for_label }}"
+                       class="block text-gray-700 font-medium mb-2">Créé Par</label>
+                {{ form.created_by }}
+                {% if form.created_by.errors %}<p class="text-red-500 text-sm mt-1">{{ form.created_by.errors }}</p>{% endif %}
+            </div>
+            <!-- Add other form fields similarly if any -->
+            <div class="flex items-center justify-between mt-6">
+                <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded shadow focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Ajouter le Produit
+                </button>
+                <a href="{% url 'products:product_list' %}"
+                   class="text-gray-600 hover:text-gray-800 font-medium">Retour à la liste des produits</a>
+            </div>
+        </form>
+    </div>
+    <!-- Optional: Success Message (Handled via Django Messages Framework) -->
+    {% if messages %}
+        <div class="fixed top-5 right-5 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+            {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}

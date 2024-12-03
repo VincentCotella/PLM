@@ -1,157 +1,188 @@
 {% extends 'products/base.html' %}
-
 {% block content %}
-<div class="flex">
-    <!-- Sidebar pour les Widgets -->
+  <div class="flex">
+    <!-- Sidebar for Widgets -->
     <div class="w-1/4 bg-gray-100 p-4">
-        <h2 class="font-bold mb-4">Widgets</h2>
-        <button class="bg-blue-500 text-white w-full p-2 mb-2 rounded" onclick="showWidget('overview-widget')">Product Overview</button>
-        <button class="bg-blue-500 text-white w-full p-2 mb-2 rounded" onclick="showWidget('ranges-widget')">Product Ranges</button>
-        <button class="bg-blue-500 text-white w-full p-2 mb-2 rounded" onclick="showWidget('sites-widget')">Production Sites</button>
-        <button class="bg-blue-500 text-white w-full p-2 mb-2 rounded" onclick="showWidget('categories-widget')">Product Categories</button>
-        <button class="bg-blue-500 text-white w-full p-2 mb-2 rounded" onclick="showWidget('recent-modifications-widget')">Recently Modified Products</button>
-        <button class="bg-blue-500 text-white w-full p-2 mb-2 rounded" onclick="showWidget('projects-widget')">Active Projects</button>
-        <button class="bg-blue-500 text-white w-full p-2 mb-2 rounded" onclick="showWidget('cost-simulations-widget')">Cost Simulations</button>
-        <button class="bg-blue-500 text-white w-full p-2 mb-2 rounded" onclick="showWidget('modification-history-widget')">Modification History</button>
-        <button class="bg-blue-500 text-white w-full p-2 mb-2 rounded" onclick="showWidget('report-widget')">Generate Report</button>
+      <h2 class="font-bold mb-4">Widgets</h2>
+      <button class="bg-blue-500 text-white w-full p-2 mb-2 rounded"
+              onclick="showWidget('overview-widget')">Product Overview</button>
+      <button class="bg-blue-500 text-white w-full p-2 mb-2 rounded"
+              onclick="showWidget('ranges-widget')">Product Ranges</button>
+      <button class="bg-blue-500 text-white w-full p-2 mb-2 rounded"
+              onclick="showWidget('sites-widget')">Production Sites</button>
+      <button class="bg-blue-500 text-white w-full p-2 mb-2 rounded"
+              onclick="showWidget('categories-widget')">Product Categories</button>
+      <button class="bg-blue-500 text-white w-full p-2 mb-2 rounded"
+              onclick="showWidget('recent-modifications-widget')">Recently Modified Products</button>
+      <button class="bg-blue-500 text-white w-full p-2 mb-2 rounded"
+              onclick="showWidget('projects-widget')">Active Projects</button>
+      <button class="bg-blue-500 text-white w-full p-2 mb-2 rounded"
+              onclick="showWidget('cost-simulations-widget')">Cost Simulations</button>
+      <button class="bg-blue-500 text-white w-full p-2 mb-2 rounded"
+              onclick="showWidget('modification-history-widget')">Modification History</button>
+      <button class="bg-blue-500 text-white w-full p-2 mb-2 rounded"
+              onclick="showWidget('report-widget')">Generate Report</button>
     </div>
-
-    <!-- Zone d'Affichage des Widgets -->
+    <!-- Display Area for Widgets -->
     <div class="w-3/4 p-4">
-        <div id="overview-widget" class="widget hidden">
-            <h2 class="text-xl font-bold mb-2">Product Overview</h2>
-            <p>Total Products: {{ products.count }}</p>
+      <!-- Product Overview Widget -->
+      <div id="overview-widget" class="widget">
+        <h2 class="text-xl font-bold mb-2">Product Overview</h2>
+        <p>Total Products: {{ products.count }}</p>
+      </div>
+      <!-- Product Ranges Widget -->
+      <div id="ranges-widget" class="widget hidden">
+        <h2 class="text-xl font-bold mb-2">Product Ranges</h2>
+        <ul>
+          {% for range in ranges %}
+            <li class="py-2">
+              <strong>{{ range.name }} ({{ range.get_category_display }})</strong> - Total Products: {{ range.product_set.count }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <!-- Production Sites Widget -->
+      <div id="sites-widget" class="widget hidden">
+        <h2 class="text-xl font-bold mb-2">Production Sites</h2>
+        <ul>
+          {% for site in sites %}
+            <li class="py-2">
+              <strong>{{ site.name }} - {{ site.get_location_display }}</strong>
+              <br>
+              Capacity: {{ site.capacity }} units
+              <br>
+              Products: {{ site.product_set.count }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <!-- Product Categories Widget -->
+      <div id="categories-widget" class="widget hidden">
+        <h2 class="text-xl font-bold mb-2">Product Categories</h2>
+        <div class="relative" style="height: 400px;">
+          <canvas id="categoriesChart" class="absolute inset-0"></canvas>
         </div>
-
-        <div id="ranges-widget" class="widget hidden">
-            <h2 class="text-xl font-bold mb-2">Product Ranges</h2>
-            <ul>
-                {% for range in ranges %}
-                <li class="py-2">
-                    <strong>{{ range.name }} ({{ range.get_category_display }})</strong> - Total Products: {{ range.product_set.count }}
-                </li>
-                {% endfor %}
-            </ul>
-        </div>
-
-        <div id="sites-widget" class="widget hidden">
-            <h2 class="text-xl font-bold mb-2">Production Sites</h2>
-            <ul>
-                {% for site in sites %}
-                <li class="py-2">
-                    <strong>{{ site.name }} - {{ site.get_location_display }}</strong>
-                    <br>
-                    Capacity: {{ site.capacity }} units
-                    <br>
-                    Products: {{ site.product_set.count }}
-                </li>
-                {% endfor %}
-            </ul>
-        </div>
-
-        <div id="categories-widget" class="widget hidden">
-            <h2 class="text-xl font-bold mb-2">Product Categories</h2>
-            <ul>
-                <li>Agrifood: {{ agrifood_products.count }}</li>
-                <li>Perfumery: {{ perfumery_products.count }}</li>
-            </ul>
-        </div>
-
-        <div id="recent-modifications-widget" class="widget hidden">
-            <h2 class="text-xl font-bold mb-2">Recently Modified Products</h2>
-            <ul>
-                {% for product in products|dictsort:"-updated_at" %}
-                {% if forloop.counter <= 5 %}
-                <li class="py-2">
-                    <strong>{{ product.name }}</strong> - Last modified: {{ product.updated_at|date:"Y-m-d H:i" }}
-                </li>
-                {% endif %}
-                {% endfor %}
-            </ul>
-        </div>
-
-        <div id="projects-widget" class="widget hidden">
-            <h2 class="text-xl font-bold mb-2">Active Projects</h2>
-            <ul>
-                {% for project in projects %}
-                <li class="py-2">
-                    <strong>{{ project.name }}</strong> - Status: {{ project.status }}
-                    <br>
-                    Products: {{ project.products.count }}
-                </li>
-                {% endfor %}
-            </ul>
-        </div>
-
-        <div id="cost-simulations-widget" class="widget hidden">
-            <h2 class="text-xl font-bold mb-2">Cost Simulations</h2>
-            <ul>
-                {% for product in products %}
-                {% for simulation in product.cost_simulations.all %}
-                <li class="py-2">
-                    <strong>{{ product.name }}</strong> - Calculated Price: {{ simulation.calculated_price }}$
-                </li>
-                {% endfor %}
-                {% endfor %}
-            </ul>
-        </div>
-
-        <div id="modification-history-widget" class="widget hidden">
-            <h2 class="text-xl font-bold mb-2">Modification History</h2>
-            <ul>
-                {% for modification in modification_history %}
-                <li class="py-2">
-                    Product: <strong>{{ modification.product.name }}</strong>
-                    <br>
-                    Modified by: {{ modification.modified_by.username }} - Date: {{ modification.date_modified|date:"Y-m-d H:i" }}
-                    <br>
-                    Change Description: {{ modification.change_description }}
-                </li>
-                {% endfor %}
-            </ul>
-        </div>
-
-        <div id="report-widget" class="widget hidden">
-            <h2 class="text-xl font-bold mb-2">Generate Production Reports</h2>
-            <p>Click below to generate a detailed production report for all active products.</p>
-            <a href="{% url 'products:generate_report' %}" class="bg-blue-500 text-white p-2 rounded">Generate Report</a>
-        </div>
+      </div>
+      <!-- Recently Modified Products Widget -->
+      <div id="recent-modifications-widget" class="widget hidden">
+        <h2 class="text-xl font-bold mb-2">Recently Modified Products</h2>
+        <ul>
+          {% for product in products|dictsort:"-updated_at" %}
+            {% if forloop.counter <= 5 %}
+              <li class="py-2">
+                <strong>{{ product.name }}</strong> - Last modified: {{ product.updated_at|date:"Y-m-d H:i" }}
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+      <!-- Active Projects Widget -->
+      <div id="projects-widget" class="widget hidden">
+        <h2 class="text-xl font-bold mb-2">Active Projects</h2>
+        <ul>
+          {% for project in projects %}
+            <li class="py-2">
+              <strong>{{ project.name }}</strong> - Status: {{ project.status }}
+              <br>
+              Products: {{ project.products.count }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <!-- Cost Simulations Widget -->
+      <div id="cost-simulations-widget" class="widget hidden">
+        <h2 class="text-xl font-bold mb-2">Cost Simulations</h2>
+        <ul>
+          {% for simulation in cost_simulations_data %}
+            <li class="py-2">
+              <strong>{{ simulation.product_name }}</strong> - Calculated Price: {{ simulation.calculated_price }}$
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <!-- Modification History Widget -->
+      <div id="modification-history-widget" class="widget hidden">
+        <h2 class="text-xl font-bold mb-2">Modification History</h2>
+        <ul>
+          {% for modification in modification_history %}
+            <li class="py-2">
+              Product: <strong>{{ modification.product.name }}</strong>
+              <br>
+              Modified by: {{ modification.modified_by.username }} - Date: {{ modification.date_modified|date:"Y-m-d H:i" }}
+              <br>
+              Change Description: {{ modification.change_description }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <!-- Generate Report Widget -->
+      <div id="report-widget" class="widget hidden">
+        <h2 class="text-xl font-bold mb-2">Generate Production Reports</h2>
+        <p>Click below to generate a detailed production report for all active products.</p>
+        <a href="{% url 'products:generate_report' %}"
+           class="bg-blue-500 text-white p-2 rounded">Generate Report</a>
+      </div>
     </div>
-</div>
+  </div>
+  <!-- JavaScript to Handle Widget Display and Chart Initialization -->
+  <script>
+    // Flag to ensure the chart initializes only once
+    var categoriesChartInitialized = false;
 
-<!-- JavaScript pour gérer l'affichage dynamique des widgets -->
-<script>
     function showWidget(widgetId) {
         var widgets = document.querySelectorAll('.widget');
         widgets.forEach(widget => widget.classList.add('hidden'));
         var targetWidget = document.getElementById(widgetId);
         if (targetWidget) {
             targetWidget.classList.remove('hidden');
+
+            // Initialize Chart.js only once when the categories widget is shown
+            if (widgetId === 'categories-widget' && !categoriesChartInitialized) {
+                var ctx = document.getElementById('categoriesChart').getContext('2d');
+                var agrifoodData = JSON.parse('{{ agrifood_products_data|escapejs }}');
+                var perfumeryData = JSON.parse('{{ perfumery_products_data|escapejs }}');
+
+                var agrifoodCount = agrifoodData.length;
+                var perfumeryCount = perfumeryData.length;
+
+                // Ensure counts are valid numbers
+                agrifoodCount = Number(agrifoodCount) || 0;
+                perfumeryCount = Number(perfumeryCount) || 0;
+
+                var categoriesChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Agrifood', 'Perfumery'],
+                        datasets: [{
+                            label: '# of Products',
+                            data: [agrifoodCount, perfumeryCount],
+                            backgroundColor: ['#FF6384', '#36A2EB'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Product Categories Distribution'
+                            }
+                        }
+                    }
+                });
+
+                categoriesChartInitialized = true;
+            }
         }
     }
 
-    // Initialisation du graphique
-    var agrifoodCount = JSON.parse(document.getElementById('agrifood-data').textContent).length;
-    var perfumeryCount = JSON.parse(document.getElementById('perfumery-data').textContent).length;
-
-    var categoriesChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Agrifood', 'Perfumery'],
-            datasets: [{
-                label: '# of Products',
-                data: [agrifoodCount, perfumeryCount],
-                backgroundColor: ['#FF6384', '#36A2EB'],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            legend: {
-                position: 'bottom'
-            }
-        }
+    // Initialize the overview widget by default
+    document.addEventListener('DOMContentLoaded', function () {
+        showWidget('overview-widget');
     });
-</script>
+  </script>
 {% endblock %}

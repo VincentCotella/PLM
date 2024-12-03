@@ -1,10 +1,12 @@
 from django.urls import path
-from django.contrib.auth import views as auth_views
+from django.contrib import admin
+from django.contrib.auth.views import LogoutView
 from . import views
 
 app_name = 'products'
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
     path('', views.dashboard, name='dashboard'),  # Tableau de bord
     path('products/', views.product_list, name='product_list'),  # Liste des produits
     path('products/<int:product_id>/', views.product_detail, name='product_detail'),  # Détail du produit
