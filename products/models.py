@@ -26,10 +26,24 @@ class Site(models.Model):
 
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=2, choices=LOCATION_CHOICES)
-    capacity = models.PositiveIntegerField()  # Capacité de production (en nombre de produits ou autre unité)
+    capacity = models.PositiveIntegerField(help_text="Production capacity in units")
+    is_active = models.BooleanField(default=True)
     
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Production Site'
+        verbose_name_plural = 'Production Sites'
+
     def __str__(self):
         return f"{self.name} ({self.get_location_display()})"
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.capacity <= 0:
+            raise ValidationError({'capacity': 'Capacity must be greater than 0'})
+        
+    def can_be_deleted(self):
+        return self.product_set.count() == 0
 
 # Produits avec ajout du site de production et version
 class Product(models.Model):
@@ -42,6 +56,12 @@ class Product(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    stl_file = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
+        help_text="Google Drive file ID for the STL file"
+    )
     
     def save(self, *args, **kwargs):
         # Générer la référence si elle n'existe pas
