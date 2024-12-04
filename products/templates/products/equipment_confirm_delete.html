@@ -1,0 +1,17 @@
+<!-- your_app/templates/products/equipment_confirm_delete.html -->
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <h2 class="text-3xl font-bold mb-6">Supprimer l'Équipement: {{ equipment.name }}</h2>
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <p class="text-lg">Êtes-vous sûr de vouloir supprimer l'équipement <strong>{{ equipment.name }}</strong> ? Cette action est irréversible.</p>
+        <form method="post" class="mt-6">
+            {% csrf_token %}
+            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">Confirmer la Suppression</button>
+            <a href="{% url 'products:equipment_list' equipment.site.id %}" class="ml-4 bg-gray-500 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">Annuler</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

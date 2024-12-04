@@ -33,20 +33,10 @@
             <a href="{% url 'products:production_site_delete' site.id %}" class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
                 Supprimer
             </a>
+            <a href="{% url 'products:equipment_list' site.id %}" class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
+                Gérer les Équipements
+            </a>
         </div>
     </div>
 </div>
-
-<!-- Fichiers CDN de Leaflet (Retirés car la carte est supprimée) -->
-
-<!-- Retrait des scripts Leaflet -->
-<!--
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-      integrity="sha512-xodZBntMZQ8UJr0g3w1K6T1zR8yo3hcQGkr5cy/ryOcJ95IlDCRUScsPjNN94Jt5aO13EwGfQY4QFzAq3yN0Q=="
-      crossorigin="" />
-<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-        integrity="sha512-nmmA7AuwTvtAWkBj+0p4YzkXQj3cE3VnJqCFV2kVADN0U+vT3oXq1ZQWBD+aHq1jqgeO2mXCBqBfFQ5RYCchmA=="
-        crossorigin=""></script>
--->
-
 {% endblock %}

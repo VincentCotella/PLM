@@ -62,6 +62,36 @@ class Site(models.Model):
     def can_be_deleted(self):
         return self.product_set.count() == 0
 
+class Equipment(models.Model):
+    STATUS_CHOICES = [
+        ('Operational', 'Operational'),
+        ('Under Maintenance', 'Under Maintenance'),
+        ('Out of Service', 'Out of Service'),
+    ]
+
+    site = models.ForeignKey(Site, related_name='equipment', on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    equipment_type = models.CharField(max_length=100)
+    maintenance_due = models.DateField(null=True, blank=True, help_text="Next maintenance date")
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Operational')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Equipment'
+        verbose_name_plural = 'Equipment'
+
+    def __str__(self):
+        return f"{self.name} ({self.equipment_type}) - {self.site.name}"
+
+    def clean(self):
+        super().clean()  # Appeler la méthode clean de la classe parente
+        if self.maintenance_due:
+            reference_date = self.created_at.date() if self.created_at else timezone.now().date()
+            if self.maintenance_due < reference_date:
+                raise ValidationError({'maintenance_due': 'Maintenance due date cannot be in the past.'})
+
 # Produits avec ajout du site de production et version
 class Product(models.Model):
     reference = models.CharField(max_length=20, unique=True)

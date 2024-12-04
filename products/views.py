@@ -2,8 +2,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from .models import Product, ProductRange, Site, Project, ModificationHistory, CostSimulation
-from .forms import ProductForm, CostSimulationForm, SiteForm
+from .models import Product, ProductRange, Site, Project, ModificationHistory, CostSimulation, Equipment
+from .forms import ProductForm, CostSimulationForm, SiteForm, EquipmentForm
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.views import View
@@ -210,3 +210,59 @@ def production_site_delete(request, site_id):
         site.delete()
         return redirect('products:production_site_list')
     return render(request, 'products/production_site_confirm_delete.html', {'site': site})
+
+@login_required
+def equipment_list(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    equipment = site.equipment.all()
+    context = {
+        'site': site,
+        'equipment': equipment,
+    }
+    return render(request, 'products/equipment_list.html', context)
+
+@login_required
+def equipment_create(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if request.method == 'POST':
+        form = EquipmentForm(request.POST)
+        if form.is_valid():
+            equipment = form.save()
+            return redirect('products:equipment_list', site_id=site.id)
+    else:
+        form = EquipmentForm(initial={'site': site})
+    context = {
+        'form': form,
+        'site': site,
+    }
+    return render(request, 'products/equipment_form.html', context)
+
+@login_required
+def equipment_edit(request, equipment_id):
+    equipment = get_object_or_404(Equipment, id=equipment_id)
+    if request.method == 'POST':
+        form = EquipmentForm(request.POST, instance=equipment)
+        if form.is_valid():
+            form.save()
+            return redirect('products:equipment_list', site_id=equipment.site.id)
+    else:
+        form = EquipmentForm(instance=equipment)
+    context = {
+        'form': form,
+        'site': equipment.site,
+        'equipment': equipment,
+    }
+    return render(request, 'products/equipment_form.html', context)
+
+@login_required
+def equipment_delete(request, equipment_id):
+    equipment = get_object_or_404(Equipment, id=equipment_id)
+    site = equipment.site
+    if request.method == 'POST':
+        equipment.delete()
+        return redirect('products:equipment_list', site_id=site.id)
+    context = {
+        'equipment': equipment,
+        'site': site,
+    }
+    return render(request, 'products/equipment_confirm_delete.html', context)

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.contrib import messages
-from .models import Product, ProductRange, Site
+from .models import Product, ProductRange, Site, Equipment
 
 # Enregistrer les modèles dans l'interface d'administration
 admin.site.register(Product)
@@ -40,3 +40,10 @@ class SiteAdmin(admin.ModelAdmin):
                 site.delete()
             else:
                 messages.error(request, f"Cannot delete {site.name} because it has products assigned to it.")
+
+@admin.register(Equipment)
+class EquipmentAdmin(admin.ModelAdmin):
+    list_display = ('name', 'equipment_type', 'site', 'status', 'maintenance_due')
+    list_filter = ('status', 'equipment_type', 'site')
+    search_fields = ('name', 'equipment_type', 'site__name')
+    date_hierarchy = 'maintenance_due'

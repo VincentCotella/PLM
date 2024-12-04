@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product, Site, CostSimulation, Site
+from .models import Product, Site, CostSimulation, Site, Equipment
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -61,4 +61,34 @@ class SiteForm(forms.ModelForm):
                 'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500',
                 'step': 'any'
             }),
+        }
+
+class EquipmentForm(forms.ModelForm):
+    class Meta:
+        model = Equipment
+        fields = ['site', 'name', 'equipment_type', 'maintenance_due', 'status']
+        widgets = {
+            'site': forms.Select(attrs={
+                'class': 'form-select mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
+            }),
+            'name': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+            }),
+            'equipment_type': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+            }),
+            'maintenance_due': forms.DateInput(attrs={
+                'type': 'date',
+                'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+            }),
+            'status': forms.Select(attrs={
+                'class': 'form-select mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
+            }),
+        }
+        labels = {
+            'site': 'Site de Production',
+            'name': 'Nom de l\'Équipement',
+            'equipment_type': 'Type d\'Équipement',
+            'maintenance_due': 'Date de Maintenance',
+            'status': 'Statut',
         }

@@ -24,5 +24,9 @@ urlpatterns = [
     path('production-sites/<int:site_id>/', views.production_site_detail, name='production_site_detail'),
     path('production-sites/<int:site_id>/edit/', views.production_site_edit, name='production_site_edit'),
     path('production-sites/<int:site_id>/delete/', views.production_site_delete, name='production_site_delete'),
-   
+    # Routes pour les Équipements
+    path('production-sites/<int:site_id>/equipment/', views.equipment_list, name='equipment_list'),
+    path('production-sites/<int:site_id>/equipment/create/', views.equipment_create, name='equipment_create'),
+    path('equipment/<int:equipment_id>/edit/', views.equipment_edit, name='equipment_edit'),
+    path('equipment/<int:equipment_id>/delete/', views.equipment_delete, name='equipment_delete'),
 ]
