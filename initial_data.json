@@ -39,7 +39,9 @@
         "fields": {
             "name": "MGO France",
             "location": "FR",
-            "capacity": 10000
+            "capacity": 10000,
+            "latitude": 48.8566,
+            "longitude": 2.3522
         }
     },
     {
@@ -48,7 +50,9 @@
         "fields": {
             "name": "MGO Belgium",
             "location": "BE",
-            "capacity": 8000
+            "capacity": 8000,
+            "latitude": 50.8503,
+            "longitude": 4.3517
         }
     },
     {
@@ -57,7 +61,9 @@
         "fields": {
             "name": "MGO Asia",
             "location": "AS",
-            "capacity": 15000
+            "capacity": 15000,
+            "latitude": 35.6895,
+            "longitude": 139.6917
         }
     },
     {
@@ -66,7 +72,9 @@
         "fields": {
             "name": "MGO Africa",
             "location": "AF",
-            "capacity": 5000
+            "capacity": 5000,
+            "latitude": -1.2921,
+            "longitude": 36.8219
         }
     }
 ]

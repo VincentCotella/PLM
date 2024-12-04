@@ -6,10 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MGO PLM System</title>
     <!-- Tailwind CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-          rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet.js CDN for Interactive Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+          integrity="sha256-sA+gqW3r5wJrjC+8E1WlF4KDhmgBTRMKb5E1rGMZj7A="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+            integrity="sha256-nP6yJg+MPRgk0txAVk9J6+XRzEO6B0zSwt3Ky+e2ALk="
+            crossorigin=""></script>
   </head>
   <body class="bg-gray-50">
     <!-- Load static tag library -->
@@ -31,25 +37,31 @@
               {% url 'products:product_list' as product_list_url %}
               {% url 'products:add_product' as add_product_url %}
               {% url 'products:cost_simulation_list' as cost_simulation_list_url %}
+              {% url 'products:production_site_list' as production_site_list_url %}
               <!-- Dashboard Link -->
               <a href="{{ dashboard_url }}"
-                 class="{% if request.path == dashboard_url %}border-indigo-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                 class="{% if request.resolver_match.url_name == 'dashboard' %}border-indigo-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                 Dashboard
               </a>
               <!-- Produits Link -->
               <a href="{{ product_list_url }}"
-                 class="{% if request.path == product_list_url %}border-indigo-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                 class="{% if request.resolver_match.url_name == 'product_list' %}border-indigo-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                 Produits
               </a>
               <!-- Ajouter Produit Link -->
               <a href="{{ add_product_url }}"
-                 class="{% if request.path == add_product_url %}border-indigo-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                 class="{% if request.resolver_match.url_name == 'add_product' %}border-indigo-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                 Ajouter Produit
               </a>
               <!-- Cost Simulations Link -->
               <a href="{{ cost_simulation_list_url }}"
-                 class="{% if request.path == cost_simulation_list_url %}border-indigo-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                 class="{% if request.resolver_match.url_name == 'cost_simulation_list' %}border-indigo-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                 Cost Simulation
+              </a>
+              <!-- Production Sites Link -->
+              <a href="{{ production_site_list_url }}"
+                 class="{% if request.resolver_match.url_name == 'production_site_list' %}border-indigo-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                Production Sites
               </a>
               <!-- Add more links as needed -->
             </div>
@@ -117,25 +129,31 @@
           {% url 'products:product_list' as product_list_url %}
           {% url 'products:add_product' as add_product_url %}
           {% url 'products:cost_simulation_list' as cost_simulation_list_url %}
+          {% url 'products:production_site_list' as production_site_list_url %}
           <!-- Dashboard Link -->
           <a href="{{ dashboard_url }}"
-             class="{% if request.path == dashboard_url %}bg-indigo-50 border-indigo-500 text-indigo-700{% else %}border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800{% endif %} block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+             class="{% if request.resolver_match.url_name == 'dashboard' %}bg-indigo-50 border-indigo-500 text-indigo-700{% else %}border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800{% endif %} block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
             Dashboard
           </a>
           <!-- Produits Link -->
           <a href="{{ product_list_url }}"
-             class="{% if request.path == product_list_url %}bg-indigo-50 border-indigo-500 text-indigo-700{% else %}border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800{% endif %} block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+             class="{% if request.resolver_match.url_name == 'product_list' %}bg-indigo-50 border-indigo-500 text-indigo-700{% else %}border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800{% endif %} block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
             Produits
           </a>
           <!-- Ajouter Produit Link -->
           <a href="{{ add_product_url }}"
-             class="{% if request.path == add_product_url %}bg-indigo-50 border-indigo-500 text-indigo-700{% else %}border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800{% endif %} block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+             class="{% if request.resolver_match.url_name == 'add_product' %}bg-indigo-50 border-indigo-500 text-indigo-700{% else %}border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800{% endif %} block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
             Ajouter Produit
           </a>
           <!-- Cost Simulations Link -->
           <a href="{{ cost_simulation_list_url }}"
-             class="{% if request.path == cost_simulation_list_url %}bg-indigo-50 border-indigo-500 text-indigo-700{% else %}border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800{% endif %} block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+             class="{% if request.resolver_match.url_name == 'cost_simulation_list' %}bg-indigo-50 border-indigo-500 text-indigo-700{% else %}border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800{% endif %} block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
             Cost Simulation
+          </a>
+          <!-- Production Sites Link -->
+          <a href="{{ production_site_list_url }}"
+             class="{% if request.resolver_match.url_name == 'production_site_list' %}bg-indigo-50 border-indigo-500 text-indigo-700{% else %}border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800{% endif %} block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+            Production Sites
           </a>
           <!-- Add more mobile links as needed -->
         </div>

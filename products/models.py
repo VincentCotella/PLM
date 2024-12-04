@@ -1,5 +1,7 @@
+# your_app/models.py
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 # Gammes de Produits
 class ProductRange(models.Model):
@@ -15,7 +17,7 @@ class ProductRange(models.Model):
     def __str__(self):
         return f"{self.get_category_display()} - {self.name}"
 
-# Site de Production
+# Site de production 
 class Site(models.Model):
     LOCATION_CHOICES = [
         ('FR', 'France'),
@@ -28,6 +30,20 @@ class Site(models.Model):
     location = models.CharField(max_length=2, choices=LOCATION_CHOICES)
     capacity = models.PositiveIntegerField(help_text="Production capacity in units")
     is_active = models.BooleanField(default=True)
+    latitude = models.DecimalField(
+        max_digits=9,
+        decimal_places=6,
+        null=True,
+        blank=True,
+        help_text="Latitude for mapping (e.g., 48.8566)"
+    )
+    longitude = models.DecimalField(
+        max_digits=9,
+        decimal_places=6,
+        null=True,
+        blank=True,
+        help_text="Longitude for mapping (e.g., 2.3522)"
+    )
     
     class Meta:
         ordering = ['name']
@@ -38,10 +54,11 @@ class Site(models.Model):
         return f"{self.name} ({self.get_location_display()})"
 
     def clean(self):
-        from django.core.exceptions import ValidationError
         if self.capacity <= 0:
             raise ValidationError({'capacity': 'Capacity must be greater than 0'})
-        
+        if (self.latitude and not self.longitude) or (self.longitude and not self.latitude):
+            raise ValidationError('Both latitude and longitude must be provided together.')
+
     def can_be_deleted(self):
         return self.product_set.count() == 0
 

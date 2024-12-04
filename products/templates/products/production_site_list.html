@@ -1,0 +1,22 @@
+<!-- your_app/templates/products/production_site_list.html -->
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <h2 class="text-3xl font-bold mb-6 text-center">Production Sites</h2>
+    <a href="{% url 'products:production_site_create' %}" class="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mb-6 inline-block">Create New Site</a>
+    <div class="bg-white rounded-lg shadow-md p-4 overflow-y-auto">
+        <ul class="space-y-3">
+            {% for site in sites %}
+                <li class="border-b pb-3">
+                    <a href="{% url 'products:production_site_detail' site.id %}" class="text-blue-500 hover:underline font-semibold">{{ site.name }}</a>
+                    <p class="text-gray-700">{{ site.get_location_display }}</p>
+                </li>
+            {% empty %}
+                <li class="text-gray-500">No production sites available.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

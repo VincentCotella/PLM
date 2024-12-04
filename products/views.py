@@ -1,8 +1,9 @@
+# your_app/views.py
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from .models import Product, ProductRange, Site, Project, ModificationHistory, CostSimulation  
-from .forms import ProductForm, CostSimulationForm
+from .models import Product, ProductRange, Site, Project, ModificationHistory, CostSimulation
+from .forms import ProductForm, CostSimulationForm, SiteForm
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.views import View
@@ -11,7 +12,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 import requests
 from django.views.decorators.http import require_http_methods
-
 
 @login_required
 def dashboard(request):
@@ -39,6 +39,20 @@ def dashboard(request):
             'created_at': simulation.created_at.strftime('%Y-%m-%d %H:%M'),
         })
 
+    # Préparer les données des sites pour le JavaScript
+    sites_data = [
+        {
+            'name': site.name,
+            'lat': float(site.latitude) if site.latitude else None,
+            'lon': float(site.longitude) if site.longitude else None,
+            'location': site.get_location_display(),
+            'capacity': site.capacity
+        }
+        for site in sites
+        if site.latitude and site.longitude
+    ]
+    sites_json = json.dumps(sites_data, cls=DjangoJSONEncoder)
+
     context = {
         'products': products,
         'ranges': ranges,
@@ -49,9 +63,9 @@ def dashboard(request):
         'cost_simulations_data': json.dumps(cost_simulations_data, cls=DjangoJSONEncoder),
         'modification_history': modification_history,
         'simulations': simulations,  # Ajouter les simulations au contexte
+        'sites_json': sites_json,    # Ajouter les données des sites en JSON
     }
     return render(request, 'products/dashboard.html', context)
-
 
 @login_required
 def generate_report(request):
@@ -155,3 +169,44 @@ def cost_simulation_detail(request, simulation_id):
         'simulation': simulation,
     }
     return render(request, 'products/cost_simulation_detail.html', context)
+
+@login_required
+def production_site_list(request):
+    sites = Site.objects.all()
+    return render(request, 'products/production_site_list.html', {'sites': sites})
+
+@login_required
+def production_site_create(request):
+    if request.method == 'POST':
+        form = SiteForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('products:production_site_list')
+    else:
+        form = SiteForm()
+    return render(request, 'products/production_site_form.html', {'form': form})
+
+@login_required
+def production_site_detail(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    return render(request, 'products/production_site_detail.html', {'site': site})
+
+@login_required
+def production_site_edit(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if request.method == 'POST':
+        form = SiteForm(request.POST, instance=site)
+        if form.is_valid():
+            form.save()
+            return redirect('products:production_site_detail', site_id=site.id)
+    else:
+        form = SiteForm(instance=site)
+    return render(request, 'products/production_site_form.html', {'form': form, 'site': site})
+
+@login_required
+def production_site_delete(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if request.method == 'POST':
+        site.delete()
+        return redirect('products:production_site_list')
+    return render(request, 'products/production_site_confirm_delete.html', {'site': site})

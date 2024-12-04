@@ -1,0 +1,56 @@
+<!-- your_app/templates/products/production_site_form.html -->
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <h2 class="text-3xl font-bold mb-6 text-center">
+        {% if site %}
+            Edit Production Site
+        {% else %}
+            Create New Production Site
+        {% endif %}
+    </h2>
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <form method="post" action="">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="name" class="block text-gray-700 font-semibold mb-2">Name</label>
+                <input type="text" id="name" name="name" value="{{ site.name|default_if_none:'' }}" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+            <div class="mb-4">
+                <label for="location" class="block text-gray-700 font-semibold mb-2">Location</label>
+                <input type="text" id="location" name="location" value="{{ site.get_location_display|default_if_none:'' }}" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+            <div class="mb-4">
+                <label for="capacity" class="block text-gray-700 font-semibold mb-2">Capacity</label>
+                <input type="number" id="capacity" name="capacity" value="{{ site.capacity|default_if_none:'' }}" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+            <div class="mb-4">
+                <label for="is_active" class="block text-gray-700 font-semibold mb-2">Active Status</label>
+                <select id="is_active" name="is_active" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="True" {% if site.is_active %}selected{% endif %}>Active</option>
+                    <option value="False" {% if not site.is_active %}selected{% endif %}>Inactive</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="latitude" class="block text-gray-700 font-semibold mb-2">Latitude</label>
+                <input type="text" id="latitude" name="latitude" value="{{ site.latitude|default_if_none:'' }}" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="mb-6">
+                <label for="longitude" class="block text-gray-700 font-semibold mb-2">Longitude</label>
+                <input type="text" id="longitude" name="longitude" value="{{ site.longitude|default_if_none:'' }}" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="text-center">
+                <button type="submit" class="bg-indigo-500 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
+                    {% if site %}
+                        Update Site
+                    {% else %}
+                        Create Site
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

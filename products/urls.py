@@ -18,4 +18,11 @@ urlpatterns = [
     path('cost-simulations/', views.cost_simulation_list, name='cost_simulation_list'),
     path('cost-simulations/create/', views.cost_simulation_create, name='cost_simulation_create'),
     path('cost-simulations/<int:simulation_id>/', views.cost_simulation_detail, name='cost_simulation_detail'),
+    # Routes pour les sites de production
+    path('production-sites/', views.production_site_list, name='production_site_list'),
+    path('production-sites/create/', views.production_site_create, name='production_site_create'),
+    path('production-sites/<int:site_id>/', views.production_site_detail, name='production_site_detail'),
+    path('production-sites/<int:site_id>/edit/', views.production_site_edit, name='production_site_edit'),
+    path('production-sites/<int:site_id>/delete/', views.production_site_delete, name='production_site_delete'),
+   
 ]

@@ -1,0 +1,52 @@
+<!-- your_app/templates/products/production_site_detail.html -->
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <h2 class="text-3xl font-bold mb-6 text-center">Détails du Site de Production</h2>
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <p class="text-xl"><strong>Nom :</strong> {{ site.name }}</p>
+        <p class="text-xl"><strong>Emplacement :</strong> {{ site.get_location_display }}</p>
+        <p class="text-xl"><strong>Capacité :</strong> {{ site.capacity }} unités</p>
+        <p class="text-xl"><strong>Statut :</strong>
+            {% if site.is_active %}
+                <span class="text-green-500 font-semibold">Actif</span>
+            {% else %}
+                <span class="text-red-500 font-semibold">Inactif</span>
+            {% endif %}
+        </p>
+        
+        {% if site.latitude and site.longitude %}
+            <p class="text-xl"><strong>Latitude :</strong> {{ site.latitude }}</p>
+            <p class="text-xl"><strong>Longitude :</strong> {{ site.longitude }}</p>
+            <!-- La carte a été retirée -->
+        {% else %}
+            <p class="text-red-500"><strong>Coordonnées non disponibles pour ce site.</strong></p>
+        {% endif %}
+        
+        <!-- Boutons d'Action -->
+        <div class="mt-6 flex justify-center space-x-4">
+            <a href="{% url 'products:production_site_edit' site.id %}" class="bg-yellow-500 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
+                Modifier
+            </a>
+            <a href="{% url 'products:production_site_delete' site.id %}" class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
+                Supprimer
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Fichiers CDN de Leaflet (Retirés car la carte est supprimée) -->
+
+<!-- Retrait des scripts Leaflet -->
+<!--
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+      integrity="sha512-xodZBntMZQ8UJr0g3w1K6T1zR8yo3hcQGkr5cy/ryOcJ95IlDCRUScsPjNN94Jt5aO13EwGfQY4QFzAq3yN0Q=="
+      crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-nmmA7AuwTvtAWkBj+0p4YzkXQj3cE3VnJqCFV2kVADN0U+vT3oXq1ZQWBD+aHq1jqgeO2mXCBqBfFQ5RYCchmA=="
+        crossorigin=""></script>
+-->
+
+{% endblock %}

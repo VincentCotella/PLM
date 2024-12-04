@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product, Site, CostSimulation
+from .models import Product, Site, CostSimulation, Site
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -33,4 +33,32 @@ class CostSimulationForm(forms.ModelForm):
             'labor_cost': 'Coût de la Main-d\'Œuvre (€)',
             'overhead_cost': 'Frais Généraux (€)',
             'margin': 'Marge Bénéficiaire (%)',
+        }
+
+
+class SiteForm(forms.ModelForm):
+    class Meta:
+        model = Site
+        fields = ['name', 'location', 'capacity', 'is_active', 'latitude', 'longitude']
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+            }),
+            'location': forms.Select(attrs={
+                'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+            }),
+            'capacity': forms.NumberInput(attrs={
+                'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+            }),
+            'is_active': forms.CheckboxInput(attrs={
+                'class': 'mt-1'
+            }),
+            'latitude': forms.NumberInput(attrs={
+                'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500',
+                'step': 'any'
+            }),
+            'longitude': forms.NumberInput(attrs={
+                'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500',
+                'step': 'any'
+            }),
         }
