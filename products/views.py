@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from .models import Product, ProductRange, Site, Project, ModificationHistory
-from .forms import ProductForm
+from .models import Product, ProductRange, Site, Project, ModificationHistory, CostSimulation  
+from .forms import ProductForm, CostSimulationForm
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.views import View
@@ -12,6 +12,7 @@ from django.conf import settings
 import requests
 from django.views.decorators.http import require_http_methods
 
+
 @login_required
 def dashboard(request):
     products = Product.objects.all()
@@ -19,6 +20,7 @@ def dashboard(request):
     sites = Site.objects.all()
     projects = Project.objects.all()
     modification_history = ModificationHistory.objects.all()
+    simulations = CostSimulation.objects.select_related('product').order_by('-created_at')[:10]  
 
     # Serialize QuerySets into lists of dictionaries
     agrifood_products_data = list(
@@ -29,13 +31,13 @@ def dashboard(request):
     )
 
     cost_simulations_data = []
-    for product in products:
-        simulations = product.cost_simulations.all()
-        for simulation in simulations:
-            cost_simulations_data.append({
-                'product_name': product.name,
-                'calculated_price': float(simulation.calculated_price),
-            })
+    for simulation in simulations:
+        cost_simulations_data.append({
+            'product_name': simulation.product.name,
+            'calculated_price': float(simulation.calculated_price),
+            'margin': float(simulation.margin),
+            'created_at': simulation.created_at.strftime('%Y-%m-%d %H:%M'),
+        })
 
     context = {
         'products': products,
@@ -46,9 +48,9 @@ def dashboard(request):
         'perfumery_products_data': json.dumps(perfumery_products_data, cls=DjangoJSONEncoder),
         'cost_simulations_data': json.dumps(cost_simulations_data, cls=DjangoJSONEncoder),
         'modification_history': modification_history,
+        'simulations': simulations,  # Ajouter les simulations au contexte
     }
     return render(request, 'products/dashboard.html', context)
-
 
 
 @login_required
@@ -123,3 +125,33 @@ def proxy_stl(request, file_id):
             f"Error fetching STL file: {str(e)}",
             status=500
         )
+
+@login_required
+def cost_simulation_list(request):
+    simulations = CostSimulation.objects.select_related('product').all()
+    context = {
+        'simulations': simulations,
+    }
+    return render(request, 'products/cost_simulation_list.html', context)
+
+@login_required
+def cost_simulation_create(request):
+    if request.method == 'POST':
+        form = CostSimulationForm(request.POST)
+        if form.is_valid():
+            simulation = form.save()
+            return redirect('products:cost_simulation_detail', simulation_id=simulation.id)
+    else:
+        form = CostSimulationForm()
+    context = {
+        'form': form,
+    }
+    return render(request, 'products/cost_simulation_form.html', context)
+
+@login_required
+def cost_simulation_detail(request, simulation_id):
+    simulation = get_object_or_404(CostSimulation, id=simulation_id)
+    context = {
+        'simulation': simulation,
+    }
+    return render(request, 'products/cost_simulation_detail.html', context)

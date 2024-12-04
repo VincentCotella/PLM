@@ -1,0 +1,57 @@
+<!-- templates/products/cost_simulation_detail.html -->
+{% extends 'products/base.html' %}
+
+{% block content %}
+    <div class="container mx-auto p-6">
+        <h2 class="text-3xl font-bold mb-6 text-center">Détails de la Simulation de Coût</h2>
+        
+        <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
+            <table class="min-w-full divide-y divide-gray-200">
+                <tbody>
+                    <tr class="bg-gray-50">
+                        <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Produit</th>
+                        <td class="py-2 px-4 text-sm text-gray-900">{{ simulation.product.name }}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Coût des Matières Premières (€)</th>
+                        <td class="py-2 px-4 text-sm text-gray-900">{{ simulation.raw_material_cost }}</td>
+                    </tr>
+                    <tr class="bg-gray-50">
+                        <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Coût de la Main-d'Œuvre (€)</th>
+                        <td class="py-2 px-4 text-sm text-gray-900">{{ simulation.labor_cost }}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Frais Généraux (€)</th>
+                        <td class="py-2 px-4 text-sm text-gray-900">{{ simulation.overhead_cost }}</td>
+                    </tr>
+                    <tr class="bg-gray-50">
+                        <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Marge Bénéficiaire (%)</th>
+                        <td class="py-2 px-4 text-sm text-gray-900">{{ simulation.margin }}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Coût de Production (€)</th>
+                        <td class="py-2 px-4 text-sm text-gray-900">{{ simulation.production_cost }}</td>
+                    </tr>
+                    <tr class="bg-gray-50">
+                        <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Prix Calculé (€)</th>
+                        <td class="py-2 px-4 text-sm text-gray-900">{{ simulation.calculated_price }}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Date de Création</th>
+                        <td class="py-2 px-4 text-sm text-gray-900">{{ simulation.created_at|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                    <tr class="bg-gray-50">
+                        <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Date de Mise à Jour</th>
+                        <td class="py-2 px-4 text-sm text-gray-900">{{ simulation.updated_at|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="mt-6 text-center">
+                <a href="{% url 'products:cost_simulation_list' %}" class="bg-gray-500 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
+                    Retour à la Liste
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

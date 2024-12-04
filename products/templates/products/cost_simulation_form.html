@@ -1,0 +1,64 @@
+<!-- templates/products/cost_simulation_form.html -->
+{% extends 'products/base.html' %}
+
+{% block content %}
+    <div class="container mx-auto p-6">
+        <h2 class="text-3xl font-bold mb-6 text-center">Créer une Simulation de Coût</h2>
+        
+        <form method="post" class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
+            {% csrf_token %}
+            
+            <!-- Produit -->
+            <div class="mb-4">
+                <label for="id_product" class="block text-gray-700 font-semibold mb-2">Produit</label>
+                {{ form.product }}
+                {% if form.product.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.product.errors }}</p>
+                {% endif %}
+            </div>
+            
+            <!-- Coût des Matières Premières -->
+            <div class="mb-4">
+                <label for="id_raw_material_cost" class="block text-gray-700 font-semibold mb-2">Coût des Matières Premières (€)</label>
+                {{ form.raw_material_cost }}
+                {% if form.raw_material_cost.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.raw_material_cost.errors }}</p>
+                {% endif %}
+            </div>
+            
+            <!-- Coût de la Main-d'Œuvre -->
+            <div class="mb-4">
+                <label for="id_labor_cost" class="block text-gray-700 font-semibold mb-2">Coût de la Main-d'Œuvre (€)</label>
+                {{ form.labor_cost }}
+                {% if form.labor_cost.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.labor_cost.errors }}</p>
+                {% endif %}
+            </div>
+            
+            <!-- Frais Généraux -->
+            <div class="mb-4">
+                <label for="id_overhead_cost" class="block text-gray-700 font-semibold mb-2">Frais Généraux (€)</label>
+                {{ form.overhead_cost }}
+                {% if form.overhead_cost.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.overhead_cost.errors }}</p>
+                {% endif %}
+            </div>
+            
+            <!-- Marge Bénéficiaire -->
+            <div class="mb-6">
+                <label for="id_margin" class="block text-gray-700 font-semibold mb-2">Marge Bénéficiaire (%)</label>
+                {{ form.margin }}
+                {% if form.margin.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ form.margin.errors }}</p>
+                {% endif %}
+            </div>
+            
+            <!-- Bouton de Soumission -->
+            <div class="text-center">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
+                    Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

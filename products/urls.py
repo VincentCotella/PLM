@@ -14,4 +14,8 @@ urlpatterns = [
     path('generate_report/', views.generate_report, name='generate_report'),  # Ajoutez cette ligne
     path('products/<int:product_id>/stl/', views.view_stl, name='view_stl'),
     path('stl-proxy/<str:file_id>/', views.proxy_stl, name='proxy_stl'),
+    # Routes pour la Simulation de Coût
+    path('cost-simulations/', views.cost_simulation_list, name='cost_simulation_list'),
+    path('cost-simulations/create/', views.cost_simulation_create, name='cost_simulation_create'),
+    path('cost-simulations/<int:simulation_id>/', views.cost_simulation_detail, name='cost_simulation_detail'),
 ]

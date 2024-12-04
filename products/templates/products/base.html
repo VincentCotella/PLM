@@ -1,3 +1,4 @@
+<!-- templates/products/base.html -->
 <!DOCTYPE html>
 <html lang="fr">
   <head>
@@ -29,6 +30,7 @@
               {% url 'products:dashboard' as dashboard_url %}
               {% url 'products:product_list' as product_list_url %}
               {% url 'products:add_product' as add_product_url %}
+              {% url 'products:cost_simulation_list' as cost_simulation_list_url %}
               <!-- Dashboard Link -->
               <a href="{{ dashboard_url }}"
                  class="{% if request.path == dashboard_url %}border-indigo-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
@@ -43,6 +45,11 @@
               <a href="{{ add_product_url }}"
                  class="{% if request.path == add_product_url %}border-indigo-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                 Ajouter Produit
+              </a>
+              <!-- Cost Simulations Link -->
+              <a href="{{ cost_simulation_list_url }}"
+                 class="{% if request.path == cost_simulation_list_url %}border-indigo-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                Cost Simulation
               </a>
               <!-- Add more links as needed -->
             </div>
@@ -106,6 +113,10 @@
       <!-- Mobile Menu -->
       <div class="sm:hidden hidden" id="mobile-menu">
         <div class="pt-2 pb-3 space-y-1">
+          {% url 'products:dashboard' as dashboard_url %}
+          {% url 'products:product_list' as product_list_url %}
+          {% url 'products:add_product' as add_product_url %}
+          {% url 'products:cost_simulation_list' as cost_simulation_list_url %}
           <!-- Dashboard Link -->
           <a href="{{ dashboard_url }}"
              class="{% if request.path == dashboard_url %}bg-indigo-50 border-indigo-500 text-indigo-700{% else %}border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800{% endif %} block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
@@ -120,6 +131,11 @@
           <a href="{{ add_product_url }}"
              class="{% if request.path == add_product_url %}bg-indigo-50 border-indigo-500 text-indigo-700{% else %}border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800{% endif %} block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
             Ajouter Produit
+          </a>
+          <!-- Cost Simulations Link -->
+          <a href="{{ cost_simulation_list_url }}"
+             class="{% if request.path == cost_simulation_list_url %}bg-indigo-50 border-indigo-500 text-indigo-700{% else %}border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800{% endif %} block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+            Cost Simulation
           </a>
           <!-- Add more mobile links as needed -->
         </div>
