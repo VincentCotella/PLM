@@ -1,0 +1,16 @@
+<!-- your_app/templates/products/generate_sales_report.html -->
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <h2 class="text-3xl font-bold mb-6">Générer un Rapport de Ventes</h2>
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <p class="mb-4">Téléchargez le rapport de ventes en CSV ou PDF.</p>
+        <div class="flex space-x-4">
+            <a href="?export_csv=1" class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">Exporter en CSV</a>
+            <a href="?export_pdf=1" class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">Exporter en PDF</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <h2 class="text-3xl font-bold mb-6">Gestion des Ventes</h2>
+    <a href="{% url 'products:sale_create' %}" class="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mb-6 inline-block">
+        Ajouter une Vente
+    </a>
+    <div class="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
+        <table class="min-w-full bg-white">
+            <thead>
+                <tr>
+                    <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Produit</th>
+                    <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Quantité Vendue</th>
+                    <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Client</th>
+                    <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Vendeur</th>
+                    <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Prix Total (€)</th>
+                    <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Date de Vente</th>
+                    <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sale in sales %}
+                    <tr class="text-center border-t hover:bg-gray-100">
+                        <td class="py-4 px-6">{{ sale.product.name }}</td>
+                        <td class="py-4 px-6">{{ sale.quantity }}</td>
+                        <td class="py-4 px-6">{{ sale.customer|default:"N/A" }}</td>
+                        <td class="py-4 px-6">
+                            {% if sale.salesperson %}
+                                {{ sale.salesperson.username }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td class="py-4 px-6">{{ sale.total_price }}</td>
+                        <td class="py-4 px-6">{{ sale.sale_date|date:"d/m/Y H:i" }}</td>
+                        <td class="py-4 px-6">
+                            <a href="{% url 'products:sale_edit' sale.id %}" class="text-yellow-500 hover:text-yellow-700 font-semibold mr-2">
+                                Éditer
+                            </a>
+                            <!-- Vous pouvez ajouter d'autres actions ici, comme la suppression -->
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7" class="py-4 px-6 text-center text-gray-500">Aucune vente enregistrée.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

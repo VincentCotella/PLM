@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product, Site, CostSimulation, Site, Equipment
+from .models import Product, Site, CostSimulation, Site, Equipment, Inventory, Sale
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -92,3 +92,13 @@ class EquipmentForm(forms.ModelForm):
             'maintenance_due': 'Date de Maintenance',
             'status': 'Statut',
         }
+
+class InventoryForm(forms.ModelForm):
+    class Meta:
+        model = Inventory
+        fields = ['product', 'quantity']
+
+class SaleForm(forms.ModelForm):
+    class Meta:
+        model = Sale
+        fields = ['product', 'quantity', 'customer', 'salesperson', 'total_price']

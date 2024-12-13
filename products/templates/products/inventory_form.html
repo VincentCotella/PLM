@@ -1,0 +1,26 @@
+{% extends 'products/base.html' %}
+{% block content %}
+<div class="container mx-auto p-6">
+    <h2 class="text-3xl font-bold mb-6">{{ title }}</h2>
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="mb-4">
+                {{ form.product.label_tag }}
+                {{ form.product }}
+                {{ form.product.errors }}
+            </div>
+            <div class="mb-4">
+                {{ form.quantity.label_tag }}
+                {{ form.quantity }}
+                {{ form.quantity.errors }}
+            </div>
+            <div class="text-center">
+                <button type="submit" class="bg-indigo-500 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">Sauvegarder</button>
+                <a href="{% url 'products:inventory_list' %}" class="ml-4 bg-gray-500 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

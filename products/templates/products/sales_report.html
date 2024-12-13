@@ -1,0 +1,42 @@
+<!-- your_app/templates/products/sales_report.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapport de Ventes</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #f2f2f2; }
+        h1 { text-align: center; }
+    </style>
+</head>
+<body>
+    <h1>Rapport de Ventes</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Produit</th>
+                <th>Quantité Vendue</th>
+                <th>Client</th>
+                <th>Vendeur</th>
+                <th>Prix Total (€)</th>
+                <th>Date de Vente</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sale in sales %}
+                <tr>
+                    <td>{{ sale.product.name }}</td>
+                    <td>{{ sale.quantity }}</td>
+                    <td>{{ sale.customer }}</td>
+                    <td>{{ sale.salesperson.username if sale.salesperson else 'N/A' }}</td>
+                    <td>{{ sale.total_price }}</td>
+                    <td>{{ sale.sale_date|date:"d/m/Y H:i" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,9 +1,11 @@
-# your_app/models.py
+# products/models.py
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.utils import timezone
 
-# Gammes de Produits
 class ProductRange(models.Model):
     CATEGORY_CHOICES = [
         ('AG', 'Agrifood'),
@@ -17,7 +19,6 @@ class ProductRange(models.Model):
     def __str__(self):
         return f"{self.get_category_display()} - {self.name}"
 
-# Site de production 
 class Site(models.Model):
     LOCATION_CHOICES = [
         ('FR', 'France'),
@@ -86,20 +87,19 @@ class Equipment(models.Model):
         return f"{self.name} ({self.equipment_type}) - {self.site.name}"
 
     def clean(self):
-        super().clean()  # Appeler la méthode clean de la classe parente
+        super().clean()
         if self.maintenance_due:
             reference_date = self.created_at.date() if self.created_at else timezone.now().date()
             if self.maintenance_due < reference_date:
                 raise ValidationError({'maintenance_due': 'Maintenance due date cannot be in the past.'})
 
-# Produits avec ajout du site de production et version
 class Product(models.Model):
     reference = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=200)
     product_range = models.ForeignKey(ProductRange, on_delete=models.CASCADE)
-    site = models.ForeignKey(Site, on_delete=models.SET_NULL, null=True, blank=True)  # Ajout du site de production
+    site = models.ForeignKey(Site, on_delete=models.SET_NULL, null=True, blank=True)
     is_modified = models.BooleanField(default=False)
-    version_number = models.PositiveIntegerField(default=1)  # Numéro de version pour la gestion des modifications
+    version_number = models.PositiveIntegerField(default=1)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -111,7 +111,6 @@ class Product(models.Model):
     )
     
     def save(self, *args, **kwargs):
-        # Générer la référence si elle n'existe pas
         if not self.reference:
             prefix = 'AG_' if self.product_range.category == 'AG' else 'PE_'
             self.reference = f"{prefix}00{'M' if self.is_modified else 'S'}{self.version_number:03d}"
@@ -120,34 +119,29 @@ class Product(models.Model):
     def __str__(self):
         return f"{self.reference} - {self.name} (v{self.version_number})"
 
-# Simulation de Coût pour les Produits
 class CostSimulation(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='cost_simulations')
-    raw_material_cost = models.DecimalField(max_digits=10, decimal_places=2)  # Coût des matières premières
-    labor_cost = models.DecimalField(max_digits=10, decimal_places=2)  # Coût de la main-d'œuvre
-    overhead_cost = models.DecimalField(max_digits=10, decimal_places=2)  # Frais généraux (énergie, etc.)
-    production_cost = models.DecimalField(max_digits=10, decimal_places=2)  # Coût total de production
-    margin = models.DecimalField(max_digits=5, decimal_places=2)  # Marge bénéficiaire en pourcentage
-    calculated_price = models.DecimalField(max_digits=10, decimal_places=2)  # Prix de vente calculé
-    created_at = models.DateTimeField(auto_now_add=True)  # Date de création de la simulation
-    updated_at = models.DateTimeField(auto_now=True)  # Date de dernière mise à jour
+    raw_material_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    labor_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    overhead_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    production_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    margin = models.DecimalField(max_digits=5, decimal_places=2)
+    calculated_price = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def calculate_price(self):
-        # Calculer le coût total de production
         self.production_cost = self.raw_material_cost + self.labor_cost + self.overhead_cost
-        # Calculer le prix de vente basé sur la marge
         self.calculated_price = self.production_cost * (1 + self.margin / 100)
         return self.calculated_price
 
     def save(self, *args, **kwargs):
-        # Calculer le prix automatiquement avant de sauvegarder
         self.calculate_price()
         super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Cost Simulation for {self.product.name} - {self.created_at}"
 
-# BOM (Bill of Materials)
 class BOM(models.Model):
     product = models.OneToOneField(Product, on_delete=models.CASCADE)
     requirements = models.TextField()
@@ -157,7 +151,6 @@ class BOM(models.Model):
     def __str__(self):
         return f"BOM for {self.product.name}"
 
-# Exigences Clients pour les Produits
 class CustomerRequirement(models.Model):
     PRIORITY_CHOICES = [
         ('H', 'High'),
@@ -172,26 +165,48 @@ class CustomerRequirement(models.Model):
     def __str__(self):
         return f"Requirement for {self.product.name}: {self.description[:50]} ({self.get_priority_display()})"
 
-
-# Gestion des Projets de Développement de Produits
 class Project(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
-    status = models.CharField(max_length=50, default='In Progress')  # Statut du projet (In Progress, Completed, etc.)
-    products = models.ManyToManyField(Product, related_name='projects')  # Produits associés au projet
+    status = models.CharField(max_length=50, default='In Progress')
+    products = models.ManyToManyField(Product, related_name='projects')
     project_manager = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return f"Project: {self.name} - {self.status}"
 
-# Gestion de l'Historique des Modifications
-class ModificationHistory(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+class Inventory(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='inventory')
+    quantity = models.IntegerField(default=0)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Inventory of {self.product.name}: {self.quantity}"
+
+class Sale(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='sales')
+    quantity = models.PositiveIntegerField(default=0)
+    sale_date = models.DateTimeField(auto_now_add=True)
+    customer = models.CharField(max_length=100, null=True, blank=True)
+    salesperson = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def __str__(self):
+        return f"Sale of {self.product.name}: {self.quantity} units on {self.sale_date}"
+
+# Nouveau modèle de log générique pour suivre toutes les modifications
+class ChangeLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
     change_description = models.TextField()
     date_modified = models.DateTimeField(auto_now_add=True)
-    
+
+    class Meta:
+        ordering = ['-date_modified']
+
     def __str__(self):
-        return f"Change on {self.product.name} by {self.modified_by.username} at {self.date_modified}"
+        return f"Change by {self.user or 'N/A'} on {self.content_type} (ID: {self.object_id}) at {self.date_modified}"

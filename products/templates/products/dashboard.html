@@ -1,68 +1,145 @@
-<!-- your_app/templates/products/dashboard.html -->
 {% extends 'products/base.html' %}
 {% load static %}
 
 {% block content %}
 <div class="flex flex-col md:flex-row">
-    <!-- Sidebar pour les Widgets -->
+    <!-- Barre latérale -->
     <div class="w-full md:w-1/4 bg-gray-100 p-4">
-        <h2 class="text-2xl font-bold mb-6 text-center">Widgets</h2>
+        <h2 class="text-2xl font-bold mb-6 text-center">Menu</h2>
         <button class="bg-blue-500 text-white w-full p-3 mb-3 rounded hover:bg-blue-700 transition duration-200"
-                onclick="showWidget('overview-widget')">Product Overview</button>
+                onclick="showWidget('overview-widget')">Aperçu Général</button>
         <button class="bg-blue-500 text-white w-full p-3 mb-3 rounded hover:bg-blue-700 transition duration-200"
-                onclick="showWidget('ranges-widget')">Product Ranges</button>
+                onclick="showWidget('recent-modifications-widget')">Modifications Récentes</button>
         <button class="bg-blue-500 text-white w-full p-3 mb-3 rounded hover:bg-blue-700 transition duration-200"
-                onclick="showWidget('production-sites-widget')">Production Sites</button>
+                onclick="showWidget('logistique-widget')">Logistique (Stock & Ventes)</button>
         <button class="bg-blue-500 text-white w-full p-3 mb-3 rounded hover:bg-blue-700 transition duration-200"
-                onclick="showWidget('categories-widget')">Product Categories</button>
+                onclick="showWidget('production-sites-widget')">Sites de Production</button>
         <button class="bg-blue-500 text-white w-full p-3 mb-3 rounded hover:bg-blue-700 transition duration-200"
-                onclick="showWidget('recent-modifications-widget')">Recently Modified Products</button>
+                onclick="showWidget('cost-simulations-widget')">Simulations de Coût</button>
         <button class="bg-blue-500 text-white w-full p-3 mb-3 rounded hover:bg-blue-700 transition duration-200"
-                onclick="showWidget('projects-widget')">Active Projects</button>
-        <button class="bg-blue-500 text-white w-full p-3 mb-3 rounded hover:bg-blue-700 transition duration-200"
-                onclick="showWidget('cost-simulations-widget')">Cost Simulations</button>
-        <button class="bg-blue-500 text-white w-full p-3 mb-3 rounded hover:bg-blue-700 transition duration-200"
-                onclick="showWidget('modification-history-widget')">Modification History</button>
-        <button class="bg-blue-500 text-white w-full p-3 mb-3 rounded hover:bg-blue-700 transition duration-200"
-                onclick="showWidget('report-widget')">Generate Report</button>
+                onclick="showWidget('report-widget')">Générer un Rapport</button>
     </div>
     
-    <!-- Zone d'Affichage pour les Widgets -->
+    <!-- Zone d'affichage -->
     <div class="w-full md:w-3/4 p-6">
-        <!-- Widget Product Overview -->
+        
+        <!-- Widget Aperçu Général -->
         <div id="overview-widget" class="widget">
-            <h2 class="text-3xl font-bold mb-4">Product Overview</h2>
+            <h2 class="text-3xl font-bold mb-4">Aperçu Général</h2>
             <div class="bg-white shadow-md rounded-lg p-6">
-                <p class="text-xl">Total Products: <span class="font-semibold">{{ products.count }}</span></p>
+                <p class="text-xl">Total de Produits : <span class="font-semibold">{{ products_count }}</span></p>
+                <p class="text-xl">Total de Sites : <span class="font-semibold">{{ sites_count }}</span></p>
+                <p class="text-xl">Stock Total : <span class="font-semibold">{{ total_stock }}</span></p>
+                <p class="text-xl">Ventes Totales : <span class="font-semibold">{{ total_sales }}</span></p>
+                
+                <!-- Graphique des catégories de produits -->
+                <div class="mt-6" style="height:300px;">
+                    <canvas id="categoriesChart"></canvas>
+                </div>
             </div>
         </div>
-        
-        <!-- Widget Product Ranges -->
-        <div id="ranges-widget" class="widget hidden">
-            <h2 class="text-3xl font-bold mb-4">Product Ranges</h2>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <ul class="space-y-3">
-                    {% for range in ranges %}
-                        <li class="border-b pb-3">
-                            <h3 class="text-xl font-semibold">{{ range.name }} <span class="text-gray-500">({{ range.get_category_display }})</span></h3>
-                            <p class="mt-1">Total Products: <span class="font-semibold">{{ range.product_set.count }}</span></p>
-                        </li>
-                    {% endfor %}
-                </ul>
+
+        <!-- Widget Modifications Récentes -->
+        <div id="recent-modifications-widget" class="widget hidden">
+            <h2 class="text-3xl font-bold mb-4">Modifications Récentes</h2>
+            <div class="bg-white shadow-md rounded-lg p-6 overflow-x-auto">
+                <table class="min-w-full bg-white">
+                    <thead>
+                        <tr>
+                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Objet</th>
+                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Type</th>
+                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Modifié par</th>
+                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Description</th>
+                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                            <tr class="text-center border-t hover:bg-gray-100">
+                                <td class="py-4 px-6">{{ log.content_object }}</td>
+                                <td class="py-4 px-6">{{ log.content_type.model }}</td>
+                                <td class="py-4 px-6">
+                                    {% if log.user %}
+                                        {{ log.user.username }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                <td class="py-4 px-6">{{ log.change_description }}</td>
+                                <td class="py-4 px-6">{{ log.date_modified|date:"d/m/Y H:i" }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" class="py-4 px-6 text-center text-gray-500">Aucune modification récente.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
-        
-        <!-- Widget Production Sites -->
+
+        <!-- Widget Logistique -->
+        <div id="logistique-widget" class="widget hidden">
+            <!-- inchangé par rapport à votre version précédente -->
+            <h2 class="text-3xl font-bold mb-4">Logistique (Stock & Ventes)</h2>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <h3 class="text-2xl font-semibold mb-2">Produits avec faible stock</h3>
+                <table class="min-w-full mb-6">
+                    <thead>
+                        <tr>
+                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Produit</th>
+                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Quantité en Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for inv in low_stock_products %}
+                            <tr class="border-t hover:bg-gray-100">
+                                <td class="py-4 px-6">{{ inv.product.name }}</td>
+                                <td class="py-4 px-6">{{ inv.quantity }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="2" class="py-4 px-6 text-center text-gray-500">Aucun produit en stock faible.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <h3 class="text-2xl font-semibold mb-2">Top 5 des Produits les plus Vendus</h3>
+                <table class="min-w-full">
+                    <thead>
+                        <tr>
+                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Produit</th>
+                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Total Vendu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in top_selling %}
+                            <tr class="border-t hover:bg-gray-100">
+                                <td class="py-4 px-6">{{ item.product__name }}</td>
+                                <td class="py-4 px-6">{{ item.total_sold }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="2" class="py-4 px-6 text-center text-gray-500">Aucune vente enregistrée.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Widget Sites de Production -->
         <div id="production-sites-widget" class="widget hidden">
-            <h2 class="text-3xl font-bold mb-4">Production Sites</h2>
+            <!-- inchangé par rapport à votre version précédente -->
+            <h2 class="text-3xl font-bold mb-4">Sites de Production</h2>
             <a href="{% url 'products:production_site_create' %}" class="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mb-6 inline-block">Nouveau Site</a>
-            <!-- Liste des Sites -->
             <div class="bg-white rounded-lg shadow-md p-4 overflow-y-auto">
                 <ul class="space-y-3">
                     {% for site in sites %}
                         <li class="border-b pb-3">
                             <a href="{% url 'products:production_site_detail' site.id %}" class="text-blue-500 hover:underline font-semibold">{{ site.name }}</a>
-                            <p class="text-gray-700">{{ site.get_location_display }}</p>
+                            <p class="text-gray-700">{{ site.get_location_display }} - Capacité : {{ site.capacity }}</p>
                         </li>
                     {% empty %}
                         <li class="text-gray-500">Aucun site de production disponible.</li>
@@ -71,221 +148,78 @@
             </div>
         </div>
         
-        <!-- Widget Product Categories Distribution -->
-        <div id="categories-widget" class="widget hidden">
-            <h2 class="text-3xl font-bold mb-4">Product Categories Distribution</h2>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <canvas id="categoriesChart" width="400" height="400"></canvas>
-            </div>
-        </div>
-        
-        <!-- Widget Recently Modified Products -->
-        <div id="recent-modifications-widget" class="widget hidden">
-            <h2 class="text-3xl font-bold mb-4">Recently Modified Products</h2>
+        <!-- Widget Simulations de Coût -->
+        <div id="cost-simulations-widget" class="widget hidden">
+            <h2 class="text-3xl font-bold mb-4">Simulations de Coût</h2>
+            <a href="{% url 'products:cost_simulation_create' %}" class="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mb-6 inline-block">Créer une Simulation</a>
             <div class="bg-white shadow-md rounded-lg p-6 overflow-x-auto">
                 <table class="min-w-full bg-white">
                     <thead>
                         <tr>
-                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Product</th>
-                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Modified By</th>
-                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Date Modified</th>
-                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Change Description</th>
+                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Produit</th>
+                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Coût Matières (€)</th>
+                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Coût MO (€)</th>
+                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Frais Généraux (€)</th>
+                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Marge (%)</th>
+                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Prix Calculé (€)</th>
+                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Date Création</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for modification in modification_history %}
+                        {% for simulation in simulations %}
                             <tr class="text-center border-t hover:bg-gray-100">
-                                <td class="py-4 px-6">{{ modification.product.name }}</td>
-                                <td class="py-4 px-6">{{ modification.modified_by.username }}</td>
-                                <td class="py-4 px-6">{{ modification.date_modified|date:"d/m/Y H:i" }}</td>
-                                <td class="py-4 px-6">{{ modification.change_description }}</td>
+                                <td class="py-4 px-6">{{ simulation.product.name }}</td>
+                                <td class="py-4 px-6">{{ simulation.raw_material_cost }}</td>
+                                <td class="py-4 px-6">{{ simulation.labor_cost }}</td>
+                                <td class="py-4 px-6">{{ simulation.overhead_cost }}</td>
+                                <td class="py-4 px-6">{{ simulation.margin }}</td>
+                                <td class="py-4 px-6">{{ simulation.calculated_price }}</td>
+                                <td class="py-4 px-6">{{ simulation.created_at|date:"d/m/Y H:i" }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="7" class="py-4 px-6 text-center text-gray-500">Aucune simulation de coût disponible.</td>
                             </tr>
                         {% endfor %}
-                        {% if not modification_history %}
-                            <tr>
-                                <td colspan="4" class="py-4 px-6 text-center text-gray-500">No modification history available.</td>
-                            </tr>
-                        {% endif %}
                     </tbody>
                 </table>
             </div>
         </div>
         
-        <!-- Widget Active Projects -->
-        <div id="projects-widget" class="widget hidden">
-            <h2 class="text-3xl font-bold mb-4">Active Projects</h2>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <ul class="space-y-3">
-                    {% for project in projects %}
-                        <li class="border-b pb-3">
-                            <h3 class="text-xl font-semibold">{{ project.name }}</h3>
-                            <p class="text-gray-700">Status: <span class="font-semibold">{{ project.status }}</span></p>
-                            <p class="text-gray-700">Deadline: {{ project.deadline|date:"d/m/Y" }}</p>
-                        </li>
-                    {% endfor %}
-                    {% if not projects %}
-                        <li class="text-gray-500">No active projects.</li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-        
-        <!-- Widget Cost Simulations -->
-        <div id="cost-simulations-widget" class="widget hidden">
-            <h2 class="text-3xl font-bold mb-4">Cost Simulations</h2>
-            <a href="{% url 'products:cost_simulation_create' %}" class="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mb-6 inline-block">New Simulation</a>
-            <div class="bg-white shadow-md rounded-lg p-6 overflow-x-auto">
-                <table class="min-w-full bg-white">
-                    <thead>
-                        <tr>
-                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Product</th>
-                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Raw Material Cost (€)</th>
-                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Labor Cost (€)</th>
-                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Overhead Cost (€)</th>
-                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Margin (%)</th>
-                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Calculated Price (€)</th>
-                            <th class="py-3 px-6 bg-gray-200 font-semibold text-sm text-gray-700 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="simulationsTableBody">
-                        {% if simulations %}
-                            {% for simulation in simulations|slice:":5" %}
-                                <tr class="text-center border-t hover:bg-gray-100">
-                                    <td class="py-4 px-6">{{ simulation.product.name }}</td>
-                                    <td class="py-4 px-6">{{ simulation.raw_material_cost }}</td>
-                                    <td class="py-4 px-6">{{ simulation.labor_cost }}</td>
-                                    <td class="py-4 px-6">{{ simulation.overhead_cost }}</td>
-                                    <td class="py-4 px-6">{{ simulation.margin }}</td>
-                                    <td class="py-4 px-6">{{ simulation.calculated_price }}</td>
-                                    <td class="py-4 px-6">
-                                        <a class="text-blue-500 hover:text-blue-700 font-semibold focus:outline-none"
-                                           href="{% url 'products:cost_simulation_detail' simulation.id %}"
-                                           title="View Details">
-                                            <!-- Eye Icon SVG -->
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                 class="h-6 w-6 inline-block"
-                                                 fill="none"
-                                                 viewBox="0 0 24 24"
-                                                 stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                        </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            {% if simulations|length > 5 %}
-                                <tr>
-                                    <td colspan="7" class="py-4 px-6 text-center">
-                                        <a href="{% url 'products:cost_simulations' %}" class="text-blue-500 hover:underline">View All Simulations</a>
-                                    </td>
-                                </tr>
-                            {% endif %}
-                        {% else %}
-                            <tr>
-                                <td colspan="7" class="py-4 px-6 text-center text-gray-500">No cost simulations available.</td>
-                            </tr>
-                        {% endif %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-        <!-- Widget Generate Report -->
+        <!-- Widget Générer un Rapport -->
         <div id="report-widget" class="widget hidden">
-            <h2 class="text-3xl font-bold mb-4">Generate Report</h2>
+            <!-- inchangé par rapport à votre version précédente -->
+            <h2 class="text-3xl font-bold mb-4">Générer un Rapport</h2>
             <div class="bg-white shadow-md rounded-lg p-6">
                 <form method="post" action="{% url 'products:generate_report' %}">
                     {% csrf_token %}
                     <div class="mb-4">
-                        <label for="report_type" class="block text-gray-700 font-semibold mb-2">Report Type</label>
+                        <label for="report_type" class="block text-gray-700 font-semibold mb-2">Type de Rapport</label>
                         <select id="report_type" name="report_type" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="sales">Sales Report</option>
-                            <option value="inventory">Inventory Report</option>
-                            <option value="production">Production Report</option>
+                            <option value="sales">Rapport de Ventes</option>
+                            <option value="inventory">Rapport d'Inventaire</option>
+                            <option value="production">Rapport de Production</option>
                         </select>
                     </div>
                     <div class="mb-4">
-                        <label for="start_date" class="block text-gray-700 font-semibold mb-2">Start Date</label>
+                        <label for="start_date" class="block text-gray-700 font-semibold mb-2">Date de Début</label>
                         <input type="date" id="start_date" name="start_date" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div class="mb-6">
-                        <label for="end_date" class="block text-gray-700 font-semibold mb-2">End Date</label>
+                        <label for="end_date" class="block text-gray-700 font-semibold mb-2">Date de Fin</label>
                         <input type="date" id="end_date" name="end_date" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div class="text-center">
                         <button type="submit" class="bg-indigo-500 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
-                            Generate
+                            Générer
                         </button>
                     </div>
                 </form>
             </div>
         </div>
-        
     </div>
 </div>
 
-<!-- Fichiers CDN de Leaflet (Retirés car la carte est supprimée) -->
-
-<!-- Fichiers CDN de Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- Initialisation du Graphique des Catégories -->
-<script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', function () {
-        // Initialiser le graphique des catégories si le widget est visible
-        function initCategoriesChart() {
-            var ctx = document.getElementById('categoriesChart').getContext('2d');
-            var agrifoodCount = JSON.parse('{{ agrifood_products_data|escapejs }}').length;
-            var perfumeryCount = JSON.parse('{{ perfumery_products_data|escapejs }}').length;
-
-            var categoriesChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Agrifood', 'Perfumery'],
-                    datasets: [{
-                        label: '# of Products',
-                        data: [agrifoodCount, perfumeryCount],
-                        backgroundColor: ['#FF6384', '#36A2EB'],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        title: {
-                            display: true,
-                            text: 'Product Categories Distribution'
-                        }
-                    }
-                }
-            });
-        }
-
-        // Initialiser le graphique lorsque le widget est affiché
-        function handleWidgetDisplay(widgetId) {
-            if (widgetId === 'categories-widget' && !window.categoriesChartInitialized) {
-                initCategoriesChart();
-                window.categoriesChartInitialized = true;
-            }
-        }
-
-        // Écouter les clics sur les boutons de la sidebar
-        var sidebarButtons = document.querySelectorAll('.bg-blue-500');
-        sidebarButtons.forEach(function(button) {
-            button.addEventListener('click', function() {
-                var widgetId = this.getAttribute('onclick').match(/showWidget\('(.*?)'\)/)[1];
-                handleWidgetDisplay(widgetId);
-            });
-        });
-    });
-</script>
-
-<!-- JavaScript pour Gérer l'Affichage des Widgets -->
 <script>
     function showWidget(widgetId) {
         var widgets = document.querySelectorAll('.widget');
@@ -296,9 +230,40 @@
         }
     }
 
-    // Initialiser le widget de l'aperçu des produits par défaut
     document.addEventListener('DOMContentLoaded', function () {
         showWidget('overview-widget');
+    });
+</script>
+
+<!-- Script pour le graphique des catégories -->
+<script>
+    var agrifoodCount = JSON.parse('{{ agrifood_products_data|escapejs }}').length;
+    var perfumeryCount = JSON.parse('{{ perfumery_products_data|escapejs }}').length;
+    var ctx = document.getElementById('categoriesChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Agrifood', 'Perfumery'],
+            datasets: [{
+                label: '# of Products',
+                data: [agrifoodCount, perfumeryCount],
+                backgroundColor: ['#FF6384', '#36A2EB'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                title: {
+                    display: true,
+                    text: 'Répartition des Catégories de Produits'
+                }
+            }
+        }
     });
 </script>
 {% endblock %}
