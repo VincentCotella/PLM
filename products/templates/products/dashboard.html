@@ -1,3 +1,4 @@
+<!-- templates/products/dashboard.html -->
 {% extends 'products/base.html' %}
 {% load static %}
 
@@ -80,7 +81,6 @@
 
         <!-- Widget Logistique -->
         <div id="logistique-widget" class="widget hidden">
-            <!-- inchangé par rapport à votre version précédente -->
             <h2 class="text-3xl font-bold mb-4">Logistique (Stock & Ventes)</h2>
             <div class="bg-white shadow-md rounded-lg p-6">
                 <h3 class="text-2xl font-semibold mb-2">Produits avec faible stock</h3>
@@ -131,7 +131,6 @@
 
         <!-- Widget Sites de Production -->
         <div id="production-sites-widget" class="widget hidden">
-            <!-- inchangé par rapport à votre version précédente -->
             <h2 class="text-3xl font-bold mb-4">Sites de Production</h2>
             <a href="{% url 'products:production_site_create' %}" class="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded mb-6 inline-block">Nouveau Site</a>
             <div class="bg-white rounded-lg shadow-md p-4 overflow-y-auto">
@@ -188,10 +187,10 @@
         
         <!-- Widget Générer un Rapport -->
         <div id="report-widget" class="widget hidden">
-            <!-- inchangé par rapport à votre version précédente -->
             <h2 class="text-3xl font-bold mb-4">Générer un Rapport</h2>
             <div class="bg-white shadow-md rounded-lg p-6">
-                <form method="post" action="{% url 'products:generate_report' %}">
+                <!-- Formulaire pour Générer un Rapport CSV -->
+                <form method="post" action="{% url 'products:generate_report' %}" class="mb-6">
                     {% csrf_token %}
                     <div class="mb-4">
                         <label for="report_type" class="block text-gray-700 font-semibold mb-2">Type de Rapport</label>
@@ -211,59 +210,89 @@
                     </div>
                     <div class="text-center">
                         <button type="submit" class="bg-indigo-500 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
-                            Générer
+                            Générer (CSV)
                         </button>
                     </div>
                 </form>
+                
+                <!-- Formulaires pour Voir les Rapports HTML -->
+                <div class="mt-6">
+                    <h3 class="text-2xl font-semibold mb-4">Voir les Rapports HTML :</h3>
+                    
+                    <!-- Formulaire pour Rapport de Ventes HTML -->
+                    <form method="get" action="{% url 'products:sales_report_html' %}" class="mb-4">
+                        <input type="hidden" name="start_date" value="{{ request.GET.start_date }}">
+                        <input type="hidden" name="end_date" value="{{ request.GET.end_date }}">
+                        <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded">
+                            Voir Rapport de Ventes
+                        </button>
+                    </form>
+                    
+                    <!-- Bouton pour Rapport d'Inventaire HTML (Pas de filtres de dates) -->
+                    <form method="get" action="{% url 'products:inventory_report_html' %}" class="mb-4">
+                        <button type="submit" class="bg-yellow-500 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded">
+                            Voir Rapport d'Inventaire
+                        </button>
+                    </form>
+                    
+                    <!-- Formulaire pour Rapport de Production HTML -->
+                    <form method="get" action="{% url 'products:production_report_html' %}">
+                        <input type="hidden" name="start_date" value="{{ request.GET.start_date }}">
+                        <input type="hidden" name="end_date" value="{{ request.GET.end_date }}">
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
+                            Voir Rapport de Production
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-<script>
-    function showWidget(widgetId) {
-        var widgets = document.querySelectorAll('.widget');
-        widgets.forEach(widget => widget.classList.add('hidden'));
-        var targetWidget = document.getElementById(widgetId);
-        if (targetWidget) {
-            targetWidget.classList.remove('hidden');
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        showWidget('overview-widget');
-    });
-</script>
-
-<!-- Script pour le graphique des catégories -->
-<script>
-    var agrifoodCount = JSON.parse('{{ agrifood_products_data|escapejs }}').length;
-    var perfumeryCount = JSON.parse('{{ perfumery_products_data|escapejs }}').length;
-    var ctx = document.getElementById('categoriesChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Agrifood', 'Perfumery'],
-            datasets: [{
-                label: '# of Products',
-                data: [agrifoodCount, perfumeryCount],
-                backgroundColor: ['#FF6384', '#36A2EB'],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                },
-                title: {
-                    display: true,
-                    text: 'Répartition des Catégories de Produits'
-                }
+    
+    <script>
+        function showWidget(widgetId) {
+            var widgets = document.querySelectorAll('.widget');
+            widgets.forEach(widget => widget.classList.add('hidden'));
+            var targetWidget = document.getElementById(widgetId);
+            if (targetWidget) {
+                targetWidget.classList.remove('hidden');
             }
         }
-    });
-</script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            showWidget('overview-widget');
+        });
+    </script>
+    
+    <!-- Script pour le graphique des catégories -->
+    <script>
+        var agrifoodCount = JSON.parse('{{ agrifood_products_data|escapejs }}').length;
+        var perfumeryCount = JSON.parse('{{ perfumery_products_data|escapejs }}').length;
+        var ctx = document.getElementById('categoriesChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Agrifood', 'Perfumery'],
+                datasets: [{
+                    label: '# of Products',
+                    data: [agrifoodCount, perfumeryCount],
+                    backgroundColor: ['#FF6384', '#36A2EB'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Répartition des Catégories de Produits'
+                    }
+                }
+            }
+        });
+    </script>
+</div>
 {% endblock %}

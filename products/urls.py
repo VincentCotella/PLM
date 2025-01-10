@@ -29,11 +29,19 @@ urlpatterns = [
     path('production-sites/<int:site_id>/equipment/create/', views.equipment_create, name='equipment_create'),
     path('equipment/<int:equipment_id>/edit/', views.equipment_edit, name='equipment_edit'),
     path('equipment/<int:equipment_id>/delete/', views.equipment_delete, name='equipment_delete'),
+    #inventaire
     path('inventory/', views.inventory_list, name='inventory_list'),
     path('inventory/create/', views.inventory_create, name='inventory_create'),
     path('inventory/<int:inventory_id>/edit/', views.inventory_edit, name='inventory_edit'),
-    
+    #sales
     path('sales/', views.sale_list, name='sale_list'),
     path('sales/create/', views.sale_create, name='sale_create'),
     path('sales/<int:sale_id>/edit/', views.sale_edit, name='sale_edit'),
+    #reports
+    path('generate_report/', views.generate_report, name='generate_report'),
+    # Routes pour les rapports HTML
+    path('reports/sales/', views.sales_report_html, name='sales_report_html'),
+    path('reports/inventory/', views.inventory_report_html, name='inventory_report_html'),
+    path('reports/production/', views.production_report_html, name='production_report_html'),
+    
 ]

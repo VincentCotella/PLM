@@ -98,6 +98,7 @@ class Product(models.Model):
     name = models.CharField(max_length=200)
     product_range = models.ForeignKey(ProductRange, on_delete=models.CASCADE)
     site = models.ForeignKey(Site, on_delete=models.SET_NULL, null=True, blank=True)
+
     is_modified = models.BooleanField(default=False)
     version_number = models.PositiveIntegerField(default=1)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)

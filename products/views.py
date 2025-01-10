@@ -1,18 +1,21 @@
 # products/views.py
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+import csv
 from django.http import HttpResponse
 from django.contrib.auth import logout
 from django.views import View
-from django.db.models import Sum
+from django.db.models import Sum, F, FloatField, ExpressionWrapper
 from django.views.decorators.http import require_http_methods
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 import requests
 from django.conf import settings
-
+from django.utils import timezone
+from datetime import datetime
 from .models import Product, Site, Project, CostSimulation, Equipment, Inventory, Sale, ChangeLog
 from .forms import ProductForm, CostSimulationForm, SiteForm, EquipmentForm, InventoryForm, SaleForm
+from django.contrib import messages
 
 @login_required
 def dashboard(request):
@@ -264,3 +267,184 @@ def sale_edit(request, sale_id):
     else:
         form = SaleForm(instance=sale)
     return render(request, 'products/sale_form.html', {'form': form, 'title': "Modifier la Vente"})
+
+
+@login_required
+def generate_report_csv(request):
+    if request.method == 'POST':
+        report_type = request.POST.get('report_type')
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+
+        # Conversion des dates en objets datetime
+        try:
+            start = datetime.strptime(start_date, '%Y-%m-%d') if start_date else None
+        except ValueError:
+            messages.error(request, "Date de début invalide.")
+            return redirect('products:dashboard')
+        try:
+            end = datetime.strptime(end_date, '%Y-%m-%d') if end_date else None
+        except ValueError:
+            messages.error(request, "Date de fin invalide.")
+            return redirect('products:dashboard')
+
+        # Vérification de la logique des dates
+        if start and end and start > end:
+            messages.error(request, "La date de début ne peut pas être postérieure à la date de fin.")
+            return redirect('products:dashboard')
+
+        # Génération du rapport en fonction du type sélectionné
+        if report_type == 'sales':
+            sales = Sale.objects.all()
+            if start:
+                sales = sales.filter(sale_date__date__gte=start)
+            if end:
+                sales = sales.filter(sale_date__date__lte=end)
+            return export_sales_csv(sales)
+
+        elif report_type == 'inventory':
+            inventories = Inventory.objects.select_related('product').all()
+            # Pas de filtrage par date pour l'inventaire, car c'est un état à un instant T
+            return export_inventory_csv(inventories)
+
+        elif report_type == 'production':
+            products = Product.objects.select_related('site').all()
+            return export_production_csv(products)
+
+        else:
+            messages.error(request, "Type de rapport invalide.")
+            return redirect('products:dashboard')
+
+    # Si ce n'est pas un POST, retourner une erreur ou rediriger
+    messages.error(request, "Aucun rapport généré.")
+    return redirect('products:dashboard')
+
+def export_sales_csv(sales):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="sales_report.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Produit', 'Quantité Vendue', 'Date de Vente', 'Client', 'Vendeur', 'Prix Total (€)'])
+    for sale in sales:
+        writer.writerow([
+            sale.product.name,
+            sale.quantity,
+            sale.sale_date.strftime('%d/%m/%Y %H:%M'),
+            sale.customer or 'N/A',
+            sale.salesperson.username if sale.salesperson else 'N/A',
+            sale.total_price
+        ])
+    return response
+
+def export_inventory_csv(inventories):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="inventory_report.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Produit', 'Quantité en Stock', 'Dernière Mise à Jour'])
+    for inventory in inventories:
+        writer.writerow([
+            inventory.product.name,
+            inventory.quantity,
+            inventory.last_updated.strftime('%d/%m/%Y %H:%M')
+        ])
+    return response
+
+def export_production_csv(products):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="production_report.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Produit', 'Référence', 'Site de Production', 'Créé le'])
+    for product in products:
+        site_name = product.site.name if product.site else 'N/A'
+        writer.writerow([
+            product.name,
+            product.reference,
+            site_name,
+            product.created_at.strftime('%d/%m/%Y %H:%M')
+        ])
+    return response
+
+# products/views.py
+@login_required
+def sales_report_html(request):
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    sales = Sale.objects.select_related('product', 'salesperson').all()
+    if start_date:
+        try:
+            start = datetime.strptime(start_date, '%Y-%m-%d')
+            sales = sales.filter(sale_date__date__gte=start)
+        except ValueError:
+            messages.error(request, "Date de début invalide.")
+            sales = Sale.objects.none()
+    if end_date:
+        try:
+            end = datetime.strptime(end_date, '%Y-%m-%d')
+            sales = sales.filter(sale_date__date__lte=end)
+        except ValueError:
+            messages.error(request, "Date de fin invalide.")
+            sales = Sale.objects.none()
+
+    total_sales = sales.aggregate(total=Sum('quantity'))['total'] or 0
+    total_revenue = sales.aggregate(total=Sum('total_price'))['total'] or 0
+
+    context = {
+        'sales': sales,
+        'total_sales': total_sales,
+        'total_revenue': total_revenue,
+        'start_date': start_date,
+        'end_date': end_date,
+    }
+    return render(request, 'products/sales_report.html', context)
+
+
+@login_required
+def inventory_report_html(request):
+    inventories = Inventory.objects.select_related('product').all()
+
+    total_products = inventories.count()
+    # Supposons que Product a un champ 'price'
+    total_stock_value = inventories.aggregate(
+        total_value=Sum(ExpressionWrapper(F('quantity') * F('product__price'), output_field=FloatField()))
+    )['total_value'] or 0.0
+
+    context = {
+        'inventories': inventories,
+        'total_products': total_products,
+        'total_stock_value': total_stock_value,
+    }
+    return render(request, 'products/inventory_report.html', context)
+
+@login_required
+def production_report_html(request):
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    products = Product.objects.select_related('site').all()
+    if start_date:
+        try:
+            start = datetime.strptime(start_date, '%Y-%m-%d')
+            products = products.filter(created_at__date__gte=start)
+        except ValueError:
+            messages.error(request, "Date de début invalide.")
+            products = Product.objects.none()
+    if end_date:
+        try:
+            end = datetime.strptime(end_date, '%Y-%m-%d')
+            products = products.filter(created_at__date__lte=end)
+        except ValueError:
+            messages.error(request, "Date de fin invalide.")
+            products = Product.objects.none()
+
+    total_products = products.count()
+
+    context = {
+        'products': products,
+        'total_products': total_products,
+        'start_date': start_date,
+        'end_date': end_date,
+    }
+    return render(request, 'products/production_report.html', context)
