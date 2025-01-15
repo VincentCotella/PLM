@@ -1,80 +1,1341 @@
 [
     {
-        "model": "products.productrange",
-        "pk": 1,
-        "fields": {
-            "name": "Agrifood Products",
-            "category": "AG",
-            "description": "A range of certified organic agrifood products."
-        }
+      "model": "products.product",
+      "pk": 15,
+      "fields": {
+        "reference": "AG_00CH000",
+        "name": "Organic Olive Oil",
+        "product_range": 1,
+        "site": null,
+        "is_modified": false,
+        "version_number": 1,
+        "created_at": "2024-10-03T10:00:00Z",
+        "updated_at": "2024-10-03T10:00:00Z",
+        "stl_file": "1HgWFA398Auu0PerCeZhuFcgeKFLZGmGQ"
+      }
     },
     {
-        "model": "products.product",
-        "pk": 1,
-        "fields": {
-            "reference": "AG_00CH000",
-            "name": "Organic Olive Oil",
-            "product_range": 1,
-            "site": null,
-            "is_modified": false,
-            "version_number": 1,
-            "created_by": 1,
-            "created_at": "2024-10-03T10:00:00Z",
-            "updated_at": "2024-10-03T10:00:00Z",
-            "stl_file": "1HgWFA398Auu0PerCeZhuFcgeKFLZGmGQ"
-        }
+      "model": "products.productrange",
+      "pk": 1,
+      "fields": {
+        "name": "Fruits & Vegetables",
+        "category": "AG",
+        "description": "Agrifood range focusing on fresh fruits and vegetables."
+      }
     },
     {
-        "model": "products.customerrequirement",
-        "pk": 1,
-        "fields": {
-            "product": 1,
-            "description": "Must be certified organic and free from GMOs.",
-            "priority": "H"
-        }
+      "model": "products.productrange",
+      "pk": 2,
+      "fields": {
+        "name": "Dairy & Eggs",
+        "category": "AG",
+        "description": "Agrifood range of milk, cheese, yogurt, and egg products."
+      }
     },
     {
-        "model": "products.site",
-        "pk": 1,
-        "fields": {
-            "name": "MGO France",
-            "location": "FR",
-            "capacity": 10000,
-            "latitude": 48.8566,
-            "longitude": 2.3522
-        }
+      "model": "products.productrange",
+      "pk": 3,
+      "fields": {
+        "name": "Grains & Baked Goods",
+        "category": "AG",
+        "description": "Agrifood range including cereals, breads, and other baked goods."
+      }
     },
     {
-        "model": "products.site",
-        "pk": 2,
-        "fields": {
-            "name": "MGO Belgium",
-            "location": "BE",
-            "capacity": 8000,
-            "latitude": 50.8503,
-            "longitude": 4.3517
-        }
+      "model": "products.productrange",
+      "pk": 4,
+      "fields": {
+        "name": "Plant-Based Alternatives",
+        "category": "AG",
+        "description": "Agrifood range featuring vegan and plant-based meat substitutes."
+      }
+    },
+  
+  
+    {
+      "model": "products.site",
+      "pk": 1,
+      "fields": {
+        "name": "MGO France",
+        "location": "FR",
+        "capacity": 10000,
+        "is_active": true,
+        "latitude": 48.8566,
+        "longitude": 2.3522
+      }
     },
     {
-        "model": "products.site",
-        "pk": 3,
-        "fields": {
-            "name": "MGO Asia",
-            "location": "AS",
-            "capacity": 15000,
-            "latitude": 35.6895,
-            "longitude": 139.6917
-        }
+      "model": "products.site",
+      "pk": 2,
+      "fields": {
+        "name": "MGO Belgium",
+        "location": "BE",
+        "capacity": 8000,
+        "is_active": true,
+        "latitude": 50.8503,
+        "longitude": 4.3517
+      }
     },
     {
-        "model": "products.site",
-        "pk": 4,
-        "fields": {
-            "name": "MGO Africa",
-            "location": "AF",
-            "capacity": 5000,
-            "latitude": -1.2921,
-            "longitude": 36.8219
-        }
+      "model": "products.site",
+      "pk": 3,
+      "fields": {
+        "name": "MGO Asia",
+        "location": "AS",
+        "capacity": 15000,
+        "is_active": true,
+        "latitude": 35.6895,
+        "longitude": 139.6917
+      }
+    },
+    {
+      "model": "products.site",
+      "pk": 4,
+      "fields": {
+        "name": "MGO Africa",
+        "location": "AF",
+        "capacity": 5000,
+        "is_active": true,
+        "latitude": -1.2921,
+        "longitude": 36.8219
+      }
+    },
+  
+  
+    {
+      "model": "products.equipment",
+      "pk": 1,
+      "fields": {
+        "site": 1,
+        "name": "Fruit Sorting Machine",
+        "equipment_type": "Sorter",
+        "maintenance_due": "2025-09-15",
+        "status": "Operational",
+        "created_at": "2024-08-01T10:00:00Z",
+        "updated_at": "2024-08-01T10:00:00Z"
+      }
+    },
+    {
+      "model": "products.equipment",
+      "pk": 2,
+      "fields": {
+        "site": 1,
+        "name": "Vegetable Washer",
+        "equipment_type": "Washer",
+        "maintenance_due": null,
+        "status": "Under Maintenance",
+        "created_at": "2024-08-10T10:00:00Z",
+        "updated_at": "2024-08-12T10:00:00Z"
+      }
+    },
+    {
+      "model": "products.equipment",
+      "pk": 3,
+      "fields": {
+        "site": 2,
+        "name": "Dairy Pasteurizer",
+        "equipment_type": "Pasteurizer",
+        "maintenance_due": "2025-11-20",
+        "status": "Operational",
+        "created_at": "2024-08-05T08:00:00Z",
+        "updated_at": "2024-08-05T08:00:00Z"
+      }
+    },
+    {
+      "model": "products.equipment",
+      "pk": 4,
+      "fields": {
+        "site": 2,
+        "name": "Cheese Cutter",
+        "equipment_type": "Cutter",
+        "maintenance_due": "2025-06-01",
+        "status": "Operational",
+        "created_at": "2024-09-01T09:00:00Z",
+        "updated_at": "2024-09-01T09:00:00Z"
+      }
+    },
+    {
+      "model": "products.equipment",
+      "pk": 5,
+      "fields": {
+        "site": 3,
+        "name": "Grain Grinder",
+        "equipment_type": "Grinder",
+        "maintenance_due": "2025-12-01",
+        "status": "Operational",
+        "created_at": "2024-09-15T09:00:00Z",
+        "updated_at": "2024-09-15T09:00:00Z"
+      }
+    },
+    {
+      "model": "products.equipment",
+      "pk": 6,
+      "fields": {
+        "site": 3,
+        "name": "Bread Oven",
+        "equipment_type": "Oven",
+        "maintenance_due": null,
+        "status": "Out of Service",
+        "created_at": "2024-09-20T10:00:00Z",
+        "updated_at": "2024-09-20T10:00:00Z"
+      }
+    },
+    {
+      "model": "products.equipment",
+      "pk": 7,
+      "fields": {
+        "site": 4,
+        "name": "Soy Processing Machine",
+        "equipment_type": "Processor",
+        "maintenance_due": "2025-10-10",
+        "status": "Operational",
+        "created_at": "2024-09-25T10:00:00Z",
+        "updated_at": "2024-09-25T10:00:00Z"
+      }
+    },
+    {
+      "model": "products.equipment",
+      "pk": 8,
+      "fields": {
+        "site": 4,
+        "name": "Packaging Line",
+        "equipment_type": "Packaging",
+        "maintenance_due": "2025-07-07",
+        "status": "Under Maintenance",
+        "created_at": "2024-09-28T10:00:00Z",
+        "updated_at": "2024-09-28T10:00:00Z"
+      }
+    },
+    {
+      "model": "products.equipment",
+      "pk": 9,
+      "fields": {
+        "site": 3,
+        "name": "Water Purifier",
+        "equipment_type": "Purifier",
+        "maintenance_due": "2025-06-15",
+        "status": "Operational",
+        "created_at": "2024-10-02T15:00:00Z",
+        "updated_at": "2024-10-02T15:00:00Z"
+      }
+    },
+    {
+      "model": "products.equipment",
+      "pk": 10,
+      "fields": {
+        "site": 1,
+        "name": "Tomato Processor",
+        "equipment_type": "Processor",
+        "maintenance_due": null,
+        "status": "Operational",
+        "created_at": "2024-10-05T15:00:00Z",
+        "updated_at": "2024-10-05T15:00:00Z"
+      }
+    },
+  
+  
+    {
+      "model": "products.product",
+      "pk": 1,
+      "fields": {
+        "reference": "AG_00S001",
+        "name": "Fresh Apple Pack",
+        "product_range": 1,
+        "site": 1,
+        "is_modified": false,
+        "version_number": 1,
+        "created_at": "2024-07-01T10:00:00Z",
+        "updated_at": "2024-07-01T10:00:00Z",
+        "stl_file": "1HgWFA398Auu0PerCeZhuFcgApple"
+      }
+    },
+    {
+      "model": "products.product",
+      "pk": 2,
+      "fields": {
+        "reference": "AG_00M002",
+        "name": "Bagged Salad Mix",
+        "product_range": 1,
+        "site": 1,
+        "is_modified": true,
+        "version_number": 2,
+        "created_at": "2024-07-02T10:00:00Z",
+        "updated_at": "2024-07-05T10:00:00Z",
+        "stl_file": "1HgWFA398Auu0PerCeZhuFcgSalad"
+      }
+    },
+    {
+      "model": "products.product",
+      "pk": 3,
+      "fields": {
+        "reference": "AG_00S003",
+        "name": "Organic Carrot Pack",
+        "product_range": 1,
+        "site": null,
+        "is_modified": false,
+        "version_number": 1,
+        "created_at": "2024-07-03T10:00:00Z",
+        "updated_at": "2024-07-03T10:00:00Z",
+        "stl_file": "1HgWFA398Auu0PerCeZhuFcgCarrot"
+      }
+    },
+    {
+      "model": "products.product",
+      "pk": 4,
+      "fields": {
+        "reference": "AG_00S004",
+        "name": "Whole Milk",
+        "product_range": 2,
+        "site": 2,
+        "is_modified": false,
+        "version_number": 1,
+        "created_at": "2024-07-04T10:00:00Z",
+        "updated_at": "2024-07-04T10:00:00Z",
+        "stl_file": "1HgWFA398Auu0PerCeZhuFcgMilk"
+      }
+    },
+    {
+      "model": "products.product",
+      "pk": 5,
+      "fields": {
+        "reference": "AG_00M005",
+        "name": "Organic Cheese Block",
+        "product_range": 2,
+        "site": 2,
+        "is_modified": true,
+        "version_number": 2,
+        "created_at": "2024-07-05T10:00:00Z",
+        "updated_at": "2024-07-06T10:00:00Z",
+        "stl_file": "1HgWFA398Auu0PerCeZhuFcgCheese"
+      }
+    },
+    {
+      "model": "products.product",
+      "pk": 6,
+      "fields": {
+        "reference": "AG_00S006",
+        "name": "Free-Range Eggs Dozen",
+        "product_range": 2,
+        "site": 2,
+        "is_modified": false,
+        "version_number": 1,
+        "created_at": "2024-07-06T10:00:00Z",
+        "updated_at": "2024-07-06T10:00:00Z",
+        "stl_file": "1HgWFA398Auu0PerCeZhuFcgEggs"
+      }
+    },
+    {
+      "model": "products.product",
+      "pk": 7,
+      "fields": {
+        "reference": "AG_00S007",
+        "name": "Whole Wheat Bread",
+        "product_range": 3,
+        "site": 3,
+        "is_modified": false,
+        "version_number": 1,
+        "created_at": "2024-07-07T10:00:00Z",
+        "updated_at": "2024-07-07T10:00:00Z",
+        "stl_file": "1HgWFA398Auu0PerCeZhuFcgBread"
+      }
+    },
+    {
+      "model": "products.product",
+      "pk": 8,
+      "fields": {
+        "reference": "AG_00M008",
+        "name": "Organic Cookies",
+        "product_range": 3,
+        "site": 3,
+        "is_modified": true,
+        "version_number": 3,
+        "created_at": "2024-07-08T10:00:00Z",
+        "updated_at": "2024-07-10T10:00:00Z",
+        "stl_file": "1HgWFA398Auu0PerCeZhuFcgCookies"
+      }
+    },
+    {
+      "model": "products.product",
+      "pk": 9,
+      "fields": {
+        "reference": "AG_00S009",
+        "name": "Rye Flour Pack",
+        "product_range": 3,
+        "site": 3,
+        "is_modified": false,
+        "version_number": 1,
+        "created_at": "2024-07-09T10:00:00Z",
+        "updated_at": "2024-07-09T10:00:00Z",
+        "stl_file": "1HgWFA398Auu0PerCeZhuFcgFlour"
+      }
+    },
+    {
+      "model": "products.product",
+      "pk": 10,
+      "fields": {
+        "reference": "AG_00S010",
+        "name": "Soy Burger Patties",
+        "product_range": 4,
+        "site": 4,
+        "is_modified": false,
+        "version_number": 1,
+        "created_at": "2024-07-10T10:00:00Z",
+        "updated_at": "2024-07-10T10:00:00Z",
+        "stl_file": "1HgWFA398Auu0PerCeZhuFcgSoyBurger"
+      }
+    },
+    {
+      "model": "products.product",
+      "pk": 11,
+      "fields": {
+        "reference": "AG_00M011",
+        "name": "Tofu Cubes",
+        "product_range": 4,
+        "site": 4,
+        "is_modified": true,
+        "version_number": 2,
+        "created_at": "2024-07-11T10:00:00Z",
+        "updated_at": "2024-07-12T10:00:00Z",
+        "stl_file": "1HgWFA398Auu0PerCeZhuFcgTofu"
+      }
+    },
+    {
+      "model": "products.product",
+      "pk": 12,
+      "fields": {
+        "reference": "AG_00S012",
+        "name": "Oat Milk",
+        "product_range": 4,
+        "site": 4,
+        "is_modified": false,
+        "version_number": 1,
+        "created_at": "2024-07-12T10:00:00Z",
+        "updated_at": "2024-07-12T10:00:00Z",
+        "stl_file": "1HgWFA398Auu0PerCeZhuFcgOatMilk"
+      }
+    },
+  
+  
+    {
+      "model": "products.bom",
+      "pk": 1,
+      "fields": {
+        "product": 1,
+        "requirements": "List of required materials: fresh apples, packaging.",
+        "manufacturing_process": "Sort, wash, package.",
+        "resources": "Conveyor belt, packaging machine."
+      }
+    },
+    {
+      "model": "products.bom",
+      "pk": 2,
+      "fields": {
+        "product": 2,
+        "requirements": "Lettuce, carrots, cucumbers.",
+        "manufacturing_process": "Wash, chop, mix, bag.",
+        "resources": "Vegetable washer, packaging line."
+      }
+    },
+    {
+      "model": "products.bom",
+      "pk": 3,
+      "fields": {
+        "product": 3,
+        "requirements": "Carrots, packaging.",
+        "manufacturing_process": "Wash, peel, package.",
+        "resources": "Carrot peeler, packaging line."
+      }
+    },
+    {
+      "model": "products.bom",
+      "pk": 4,
+      "fields": {
+        "product": 4,
+        "requirements": "Raw milk, bottles.",
+        "manufacturing_process": "Pasteurize, bottle, label.",
+        "resources": "Pasteurizer, bottling line."
+      }
+    },
+    {
+      "model": "products.bom",
+      "pk": 5,
+      "fields": {
+        "product": 5,
+        "requirements": "Curd, salt, packaging.",
+        "manufacturing_process": "Mold cheese, age, package.",
+        "resources": "Cheese mold, storage room."
+      }
+    },
+    {
+      "model": "products.bom",
+      "pk": 6,
+      "fields": {
+        "product": 6,
+        "requirements": "Eggs, egg carton.",
+        "manufacturing_process": "Collect, clean, package.",
+        "resources": "Washer, packing station."
+      }
+    },
+    {
+      "model": "products.bom",
+      "pk": 7,
+      "fields": {
+        "product": 7,
+        "requirements": "Whole wheat flour, yeast, water.",
+        "manufacturing_process": "Mix dough, bake, slice.",
+        "resources": "Mixer, oven, slicer."
+      }
+    },
+    {
+      "model": "products.bom",
+      "pk": 8,
+      "fields": {
+        "product": 8,
+        "requirements": "Flour, sugar, butter, chocolate chips (optional).",
+        "manufacturing_process": "Mix dough, shape cookies, bake.",
+        "resources": "Mixer, oven, cooling rack."
+      }
+    },
+    {
+      "model": "products.bom",
+      "pk": 9,
+      "fields": {
+        "product": 9,
+        "requirements": "Rye grains, milling machine, packaging.",
+        "manufacturing_process": "Clean grains, mill, package.",
+        "resources": "Milling machine, packaging station."
+      }
+    },
+    {
+      "model": "products.bom",
+      "pk": 10,
+      "fields": {
+        "product": 10,
+        "requirements": "Soy beans, spices, binding agent.",
+        "manufacturing_process": "Soak beans, blend, form patties, freeze.",
+        "resources": "Processor, forming machine, freezer."
+      }
+    },
+    {
+      "model": "products.bom",
+      "pk": 11,
+      "fields": {
+        "product": 11,
+        "requirements": "Soy milk, coagulant, water.",
+        "manufacturing_process": "Coagulate, press, cut.",
+        "resources": "Press machine, cutting table."
+      }
+    },
+    {
+      "model": "products.bom",
+      "pk": 12,
+      "fields": {
+        "product": 12,
+        "requirements": "Oats, water, enzymes.",
+        "manufacturing_process": "Soak oats, blend, filter, package.",
+        "resources": "Blender, filter press, packaging line."
+      }
+    },
+  
+  
+    {
+      "model": "products.customerrequirement",
+      "pk": 1,
+      "fields": {
+        "product": 1,
+        "description": "Must be fresh and free from bruises.",
+        "priority": "M"
+      }
+    },
+    {
+      "model": "products.customerrequirement",
+      "pk": 2,
+      "fields": {
+        "product": 2,
+        "description": "Ingredients must be organic and pre-washed.",
+        "priority": "H"
+      }
+    },
+    {
+      "model": "products.customerrequirement",
+      "pk": 3,
+      "fields": {
+        "product": 3,
+        "description": "Carrots must be from local farms only.",
+        "priority": "H"
+      }
+    },
+    {
+      "model": "products.customerrequirement",
+      "pk": 4,
+      "fields": {
+        "product": 4,
+        "description": "No preservatives; raw milk with minimal processing.",
+        "priority": "H"
+      }
+    },
+    {
+      "model": "products.customerrequirement",
+      "pk": 5,
+      "fields": {
+        "product": 5,
+        "description": "Must be aged at least 3 months.",
+        "priority": "M"
+      }
+    },
+    {
+      "model": "products.customerrequirement",
+      "pk": 6,
+      "fields": {
+        "product": 6,
+        "description": "Eggs must be from free-range hens and certified organic.",
+        "priority": "H"
+      }
+    },
+    {
+      "model": "products.customerrequirement",
+      "pk": 7,
+      "fields": {
+        "product": 7,
+        "description": "Packaging must be recyclable.",
+        "priority": "L"
+      }
+    },
+    {
+      "model": "products.customerrequirement",
+      "pk": 8,
+      "fields": {
+        "product": 8,
+        "description": "100% organic wheat and fair-trade sugar only.",
+        "priority": "M"
+      }
+    },
+    {
+      "model": "products.customerrequirement",
+      "pk": 9,
+      "fields": {
+        "product": 9,
+        "description": "No cross-contamination with gluten-free lines.",
+        "priority": "M"
+      }
+    },
+    {
+      "model": "products.customerrequirement",
+      "pk": 10,
+      "fields": {
+        "product": 10,
+        "description": "Texture must mimic real meat closely.",
+        "priority": "H"
+      }
+    },
+    {
+      "model": "products.customerrequirement",
+      "pk": 11,
+      "fields": {
+        "product": 11,
+        "description": "Firm consistency, easy-to-cook cubes.",
+        "priority": "M"
+      }
+    },
+    {
+      "model": "products.customerrequirement",
+      "pk": 12,
+      "fields": {
+        "product": 12,
+        "description": "No added sweeteners; purely oat-based.",
+        "priority": "M"
+      }
+    },
+  
+  
+    {
+      "model": "products.costsimulation",
+      "pk": 1,
+      "fields": {
+        "product": 1,
+        "raw_material_cost": "2.50",
+        "labor_cost": "1.00",
+        "overhead_cost": "0.50",
+        "production_cost": "4.00",
+        "margin": "20.00",
+        "calculated_price": "4.80",
+        "created_at": "2024-07-01T10:00:00Z",
+        "updated_at": "2024-07-01T10:00:00Z"
+      }
+    },
+    {
+      "model": "products.costsimulation",
+      "pk": 2,
+      "fields": {
+        "product": 2,
+        "raw_material_cost": "1.80",
+        "labor_cost": "1.20",
+        "overhead_cost": "0.80",
+        "production_cost": "3.80",
+        "margin": "25.00",
+        "calculated_price": "4.75",
+        "created_at": "2024-07-02T10:00:00Z",
+        "updated_at": "2024-07-02T10:00:00Z"
+      }
+    },
+    {
+      "model": "products.costsimulation",
+      "pk": 3,
+      "fields": {
+        "product": 3,
+        "raw_material_cost": "1.00",
+        "labor_cost": "1.00",
+        "overhead_cost": "0.40",
+        "production_cost": "2.40",
+        "margin": "30.00",
+        "calculated_price": "3.12",
+        "created_at": "2024-07-03T10:00:00Z",
+        "updated_at": "2024-07-03T10:00:00Z"
+      }
+    },
+    {
+      "model": "products.costsimulation",
+      "pk": 4,
+      "fields": {
+        "product": 4,
+        "raw_material_cost": "0.70",
+        "labor_cost": "0.80",
+        "overhead_cost": "0.50",
+        "production_cost": "2.00",
+        "margin": "25.00",
+        "calculated_price": "2.50",
+        "created_at": "2024-07-04T10:00:00Z",
+        "updated_at": "2024-07-04T10:00:00Z"
+      }
+    },
+    {
+      "model": "products.costsimulation",
+      "pk": 5,
+      "fields": {
+        "product": 5,
+        "raw_material_cost": "2.50",
+        "labor_cost": "2.00",
+        "overhead_cost": "1.00",
+        "production_cost": "5.50",
+        "margin": "20.00",
+        "calculated_price": "6.60",
+        "created_at": "2024-07-05T10:00:00Z",
+        "updated_at": "2024-07-05T10:00:00Z"
+      }
+    },
+    {
+      "model": "products.costsimulation",
+      "pk": 6,
+      "fields": {
+        "product": 6,
+        "raw_material_cost": "1.20",
+        "labor_cost": "0.50",
+        "overhead_cost": "0.30",
+        "production_cost": "2.00",
+        "margin": "25.00",
+        "calculated_price": "2.50",
+        "created_at": "2024-07-06T10:00:00Z",
+        "updated_at": "2024-07-06T10:00:00Z"
+      }
+    },
+    {
+      "model": "products.costsimulation",
+      "pk": 7,
+      "fields": {
+        "product": 7,
+        "raw_material_cost": "0.80",
+        "labor_cost": "0.70",
+        "overhead_cost": "0.50",
+        "production_cost": "2.00",
+        "margin": "30.00",
+        "calculated_price": "2.60",
+        "created_at": "2024-07-07T10:00:00Z",
+        "updated_at": "2024-07-07T10:00:00Z"
+      }
+    },
+    {
+      "model": "products.costsimulation",
+      "pk": 8,
+      "fields": {
+        "product": 8,
+        "raw_material_cost": "1.10",
+        "labor_cost": "1.00",
+        "overhead_cost": "0.40",
+        "production_cost": "2.50",
+        "margin": "25.00",
+        "calculated_price": "3.12",
+        "created_at": "2024-07-08T10:00:00Z",
+        "updated_at": "2024-07-08T10:00:00Z"
+      }
+    },
+    {
+      "model": "products.costsimulation",
+      "pk": 9,
+      "fields": {
+        "product": 9,
+        "raw_material_cost": "1.20",
+        "labor_cost": "0.80",
+        "overhead_cost": "0.50",
+        "production_cost": "2.50",
+        "margin": "20.00",
+        "calculated_price": "3.00",
+        "created_at": "2024-07-09T10:00:00Z",
+        "updated_at": "2024-07-09T10:00:00Z"
+      }
+    },
+    {
+      "model": "products.costsimulation",
+      "pk": 10,
+      "fields": {
+        "product": 10,
+        "raw_material_cost": "2.00",
+        "labor_cost": "1.00",
+        "overhead_cost": "0.50",
+        "production_cost": "3.50",
+        "margin": "30.00",
+        "calculated_price": "4.55",
+        "created_at": "2024-07-10T10:00:00Z",
+        "updated_at": "2024-07-10T10:00:00Z"
+      }
+    },
+    {
+      "model": "products.costsimulation",
+      "pk": 11,
+      "fields": {
+        "product": 11,
+        "raw_material_cost": "1.50",
+        "labor_cost": "1.20",
+        "overhead_cost": "0.30",
+        "production_cost": "3.00",
+        "margin": "25.00",
+        "calculated_price": "3.75",
+        "created_at": "2024-07-11T10:00:00Z",
+        "updated_at": "2024-07-11T10:00:00Z"
+      }
+    },
+    {
+      "model": "products.costsimulation",
+      "pk": 12,
+      "fields": {
+        "product": 12,
+        "raw_material_cost": "1.00",
+        "labor_cost": "0.80",
+        "overhead_cost": "0.40",
+        "production_cost": "2.20",
+        "margin": "25.00",
+        "calculated_price": "2.75",
+        "created_at": "2024-07-12T10:00:00Z",
+        "updated_at": "2024-07-12T10:00:00Z"
+      }
+    },
+  
+  
+    {
+      "model": "products.inventory",
+      "pk": 1,
+      "fields": {
+        "product": 1,
+        "quantity": 100,
+        "last_updated": "2024-07-01T12:00:00Z"
+      }
+    },
+    {
+      "model": "products.inventory",
+      "pk": 2,
+      "fields": {
+        "product": 2,
+        "quantity": 80,
+        "last_updated": "2024-07-02T12:00:00Z"
+      }
+    },
+    {
+      "model": "products.inventory",
+      "pk": 3,
+      "fields": {
+        "product": 3,
+        "quantity": 60,
+        "last_updated": "2024-07-03T12:00:00Z"
+      }
+    },
+    {
+      "model": "products.inventory",
+      "pk": 4,
+      "fields": {
+        "product": 4,
+        "quantity": 200,
+        "last_updated": "2024-07-04T12:00:00Z"
+      }
+    },
+    {
+      "model": "products.inventory",
+      "pk": 5,
+      "fields": {
+        "product": 5,
+        "quantity": 50,
+        "last_updated": "2024-07-05T12:00:00Z"
+      }
+    },
+    {
+      "model": "products.inventory",
+      "pk": 6,
+      "fields": {
+        "product": 6,
+        "quantity": 90,
+        "last_updated": "2024-07-06T12:00:00Z"
+      }
+    },
+    {
+      "model": "products.inventory",
+      "pk": 7,
+      "fields": {
+        "product": 7,
+        "quantity": 150,
+        "last_updated": "2024-07-07T12:00:00Z"
+      }
+    },
+    {
+      "model": "products.inventory",
+      "pk": 8,
+      "fields": {
+        "product": 8,
+        "quantity": 40,
+        "last_updated": "2024-07-08T12:00:00Z"
+      }
+    },
+    {
+      "model": "products.inventory",
+      "pk": 9,
+      "fields": {
+        "product": 9,
+        "quantity": 70,
+        "last_updated": "2024-07-09T12:00:00Z"
+      }
+    },
+    {
+      "model": "products.inventory",
+      "pk": 10,
+      "fields": {
+        "product": 10,
+        "quantity": 120,
+        "last_updated": "2024-07-10T12:00:00Z"
+      }
+    },
+    {
+      "model": "products.inventory",
+      "pk": 11,
+      "fields": {
+        "product": 11,
+        "quantity": 65,
+        "last_updated": "2024-07-11T12:00:00Z"
+      }
+    },
+    {
+      "model": "products.inventory",
+      "pk": 12,
+      "fields": {
+        "product": 12,
+        "quantity": 85,
+        "last_updated": "2024-07-12T12:00:00Z"
+      }
+    },
+  
+  
+    {
+      "model": "products.sale",
+      "pk": 1,
+      "fields": {
+        "product": 1,
+        "quantity": 10,
+        "sale_date": "2024-08-01T09:00:00Z",
+        "customer": "Bio Market A",
+        "salesperson": null,
+        "total_price": "48.00"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 2,
+      "fields": {
+        "product": 1,
+        "quantity": 5,
+        "sale_date": "2024-08-03T09:00:00Z",
+        "customer": "Green Grocery",
+        "salesperson": null,
+        "total_price": "24.00"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 3,
+      "fields": {
+        "product": 2,
+        "quantity": 8,
+        "sale_date": "2024-08-05T09:00:00Z",
+        "customer": "Veggie Lovers",
+        "salesperson": null,
+        "total_price": "38.00"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 4,
+      "fields": {
+        "product": 2,
+        "quantity": 2,
+        "sale_date": "2024-08-06T09:00:00Z",
+        "customer": "Organic Corner",
+        "salesperson": null,
+        "total_price": "9.50"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 5,
+      "fields": {
+        "product": 3,
+        "quantity": 10,
+        "sale_date": "2024-08-07T09:00:00Z",
+        "customer": "Healthy Foods",
+        "salesperson": null,
+        "total_price": "31.20"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 6,
+      "fields": {
+        "product": 3,
+        "quantity": 3,
+        "sale_date": "2024-08-08T09:00:00Z",
+        "customer": "Organic Corner",
+        "salesperson": null,
+        "total_price": "9.36"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 7,
+      "fields": {
+        "product": 4,
+        "quantity": 20,
+        "sale_date": "2024-08-09T09:00:00Z",
+        "customer": "Bio Market A",
+        "salesperson": null,
+        "total_price": "50.00"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 8,
+      "fields": {
+        "product": 4,
+        "quantity": 10,
+        "sale_date": "2024-08-10T09:00:00Z",
+        "customer": "Local Farm Shop",
+        "salesperson": null,
+        "total_price": "25.00"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 9,
+      "fields": {
+        "product": 5,
+        "quantity": 4,
+        "sale_date": "2024-08-11T09:00:00Z",
+        "customer": "Gourmet Cheese Store",
+        "salesperson": null,
+        "total_price": "26.40"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 10,
+      "fields": {
+        "product": 5,
+        "quantity": 2,
+        "sale_date": "2024-08-12T09:00:00Z",
+        "customer": "Deli Shop",
+        "salesperson": null,
+        "total_price": "13.20"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 11,
+      "fields": {
+        "product": 6,
+        "quantity": 12,
+        "sale_date": "2024-08-13T09:00:00Z",
+        "customer": "Breakfast Club",
+        "salesperson": null,
+        "total_price": "30.00"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 12,
+      "fields": {
+        "product": 6,
+        "quantity": 6,
+        "sale_date": "2024-08-14T09:00:00Z",
+        "customer": "Hotel Continental",
+        "salesperson": null,
+        "total_price": "15.00"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 13,
+      "fields": {
+        "product": 7,
+        "quantity": 10,
+        "sale_date": "2024-08-15T09:00:00Z",
+        "customer": "Bakery Supply",
+        "salesperson": null,
+        "total_price": "26.00"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 14,
+      "fields": {
+        "product": 7,
+        "quantity": 5,
+        "sale_date": "2024-08-16T09:00:00Z",
+        "customer": "Local Store",
+        "salesperson": null,
+        "total_price": "13.00"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 15,
+      "fields": {
+        "product": 8,
+        "quantity": 8,
+        "sale_date": "2024-08-17T09:00:00Z",
+        "customer": "Café Downtown",
+        "salesperson": null,
+        "total_price": "24.96"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 16,
+      "fields": {
+        "product": 8,
+        "quantity": 3,
+        "sale_date": "2024-08-18T09:00:00Z",
+        "customer": "Gourmet Market",
+        "salesperson": null,
+        "total_price": "9.36"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 17,
+      "fields": {
+        "product": 9,
+        "quantity": 15,
+        "sale_date": "2024-08-19T09:00:00Z",
+        "customer": "Flour & More",
+        "salesperson": null,
+        "total_price": "45.00"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 18,
+      "fields": {
+        "product": 9,
+        "quantity": 5,
+        "sale_date": "2024-08-20T09:00:00Z",
+        "customer": "Organic Market B",
+        "salesperson": null,
+        "total_price": "15.00"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 19,
+      "fields": {
+        "product": 10,
+        "quantity": 10,
+        "sale_date": "2024-08-21T09:00:00Z",
+        "customer": "Vegan Place",
+        "salesperson": null,
+        "total_price": "45.50"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 20,
+      "fields": {
+        "product": 10,
+        "quantity": 5,
+        "sale_date": "2024-08-22T09:00:00Z",
+        "customer": "Green Grill",
+        "salesperson": null,
+        "total_price": "22.75"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 21,
+      "fields": {
+        "product": 11,
+        "quantity": 8,
+        "sale_date": "2024-08-23T09:00:00Z",
+        "customer": "Asian Fusion Cuisine",
+        "salesperson": null,
+        "total_price": "30.00"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 22,
+      "fields": {
+        "product": 11,
+        "quantity": 4,
+        "sale_date": "2024-08-24T09:00:00Z",
+        "customer": "Health Food Store",
+        "salesperson": null,
+        "total_price": "15.00"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 23,
+      "fields": {
+        "product": 12,
+        "quantity": 10,
+        "sale_date": "2024-08-25T09:00:00Z",
+        "customer": "Vegan Coffee Shop",
+        "salesperson": null,
+        "total_price": "27.50"
+      }
+    },
+    {
+      "model": "products.sale",
+      "pk": 24,
+      "fields": {
+        "product": 12,
+        "quantity": 5,
+        "sale_date": "2024-08-26T09:00:00Z",
+        "customer": "Local Organic Store",
+        "salesperson": null,
+        "total_price": "13.75"
+      }
+    },
+  
+  
+    {
+      "model": "products.project",
+      "pk": 1,
+      "fields": {
+        "name": "Local Farm Expansion",
+        "description": "Project to expand local farm produce distribution.",
+        "start_date": "2024-07-01",
+        "end_date": "2024-12-31",
+        "status": "In Progress",
+        "products": [1, 2, 3, 4],
+        "project_manager": 1
+      }
+    },
+    {
+      "model": "products.project",
+      "pk": 2,
+      "fields": {
+        "name": "Dairy Improvement Initiative",
+        "description": "Focus on improving dairy product quality and packaging.",
+        "start_date": "2024-08-01",
+        "end_date": "2025-01-15",
+        "status": "In Progress",
+        "products": [5, 6, 7, 8],
+        "project_manager": 1
+      }
+    },
+    {
+      "model": "products.project",
+      "pk": 3,
+      "fields": {
+        "name": "Vegan Product Launch",
+        "description": "Developing new plant-based alternatives to expand the product range.",
+        "start_date": "2024-09-01",
+        "end_date": null,
+        "status": "In Progress",
+        "products": [9, 10, 11, 12],
+        "project_manager": 1
+      }
+    },
+  
+  
+    {
+      "model": "products.changelog",
+      "pk": 1,
+      "fields": {
+        "user": 1,
+        "content_type": 11,
+        "object_id": 2,
+        "change_description": "Updated product from version 1 to version 2 (Salad Mix).",
+        "date_modified": "2024-07-05T10:05:00Z"
+      }
+    },
+    {
+      "model": "products.changelog",
+      "pk": 2,
+      "fields": {
+        "user": 1,
+        "content_type": 10,
+        "object_id": 1,
+        "change_description": "Changed site capacity from 9000 to 10000 (MGO France).",
+        "date_modified": "2024-07-05T10:10:00Z"
+      }
+    },
+    {
+      "model": "products.changelog",
+      "pk": 3,
+      "fields": {
+        "user": null,
+        "content_type": 11,
+        "object_id": 8,
+        "change_description": "Product name changed to 'Organic Cookies' for better marketing.",
+        "date_modified": "2024-07-10T12:00:00Z"
+      }
+    },
+    {
+      "model": "products.changelog",
+      "pk": 4,
+      "fields": {
+        "user": 1,
+        "content_type": 12,
+        "object_id": 6,
+        "change_description": "Equipment status changed to 'Out of Service' (Bread Oven).",
+        "date_modified": "2024-09-20T10:30:00Z"
+      }
+    },
+    {
+      "model": "products.changelog",
+      "pk": 5,
+      "fields": {
+        "user": 1,
+        "content_type": 11,
+        "object_id": 6,
+        "change_description": "Version number incremented for Free-Range Eggs packaging update.",
+        "date_modified": "2024-07-06T10:15:00Z"
+      }
+    },
+    {
+      "model": "products.changelog",
+      "pk": 6,
+      "fields": {
+        "user": null,
+        "content_type": 10,
+        "object_id": 3,
+        "change_description": "Site capacity lowered from 20000 to 15000 (MGO Asia).",
+        "date_modified": "2024-09-15T12:00:00Z"
+      }
     }
 ]
+  

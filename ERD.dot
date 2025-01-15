@@ -1,0 +1,35 @@
+digraph ERD {
+    node [shape=record, fontname=Arial]
+
+    User [label="{User|id PK|username|...}"]
+    ProductRange [label="{ProductRange|id PK|name|category|description}"]
+    Site [label="{Site|id PK|name|location|capacity|is_active|latitude|longitude}"]
+    Product [label="{Product|id PK|reference|name|is_modified|version_number|created_by FK|site FK|...}"]
+    CostSimulation [label="{CostSimulation|id PK|product FK|raw_material_cost|labor_cost|overhead_cost|production_cost|margin|calculated_price|...}"]
+    BOM [label="{BOM|id PK|product OneToOne FK|requirements|manufacturing_process|resources}"]
+    CustomerRequirement [label="{CustomerRequirement|id PK|product FK|description|priority}"]
+    Project [label="{Project|id PK|name|description|start_date|end_date|status|project_manager FK|...}"]
+    Equipment [label="{Equipment|id PK|site FK|name|equipment_type|maintenance_due|status|...}"]
+    Inventory [label="{Inventory|id PK|product FK|quantity|last_updated}"]
+    Sale [label="{Sale|id PK|product FK|quantity|sale_date|customer|salesperson FK|total_price}"]
+    ChangeLog [label="{ChangeLog|id PK|user FK|content_type FK|object_id|change_description|date_modified}"]
+
+    User -> Product [label="creates"]
+    User -> Sale [label="salesperson"]
+    User -> Project [label="manages"]
+    User -> ChangeLog [label="logs changes"]
+
+    ProductRange -> Product [label="includes"]
+    Site -> Product [label="hosts"]
+    Site -> Equipment [label="contains"]
+    Site -> Project [label="associated with"]
+
+    Product -> CostSimulation [label="has"]
+    Product -> Inventory [label="has"]
+    Product -> Sale [label="is sold in"]
+    Product -> BOM [label="has"]
+    Product -> CustomerRequirement [label="has"]
+    Product -> Project [label="belongs to"]
+
+    Project -> Product [label="includes" dir=both]
+}
