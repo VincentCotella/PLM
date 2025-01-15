@@ -72,6 +72,7 @@ PLM/
 │           ├── product_list.html# Liste des produits
 │           ├── product_detail.html # Détails d'un produit
 │           └── add_product.html # Formulaire pour ajouter un produit
+            └── ...
 ├── initial_data.json            # Fixture JSON pour initialiser la base de données
 ├── db.sqlite3                   # Base de données SQLite
 └── manage.py                    # Script de gestion Django
@@ -115,6 +116,8 @@ Pour initialiser la base de données avec des données de test, suivez ces étap
    python manage.py createsuperuser
    ```
 
+   Créez l'utilisateur de base 'user' et comme mot de passe 'user'
+
 3. **Initialisez la base de données avec `initial_data.json` :**
 
    Le fichier `initial_data.json` contient des données de base pour les gammes de produits et les produits. Pour charger ces données dans la base de données, exécutez :
@@ -127,52 +130,41 @@ Pour initialiser la base de données avec des données de test, suivez ces étap
    Voici un exemple de contenu du fichier `initial_data.json` :
 
    ```json
-   [
-       {
-           "model": "products.productrange",
-           "pk": 1,
-           "fields": {
-               "name": "Agrifood Products",
-               "category": "AG",
-               "description": "A range of certified organic agrifood products."
-           }
-       },
-       {
-           "model": "products.productrange",
-           "pk": 2,
-           "fields": {
-               "name": "Perfumery",
-               "category": "PE",
-               "description": "Exclusive collection of perfumes and cosmetics."
-           }
-       },
-       {
-           "model": "products.product",
-           "pk": 1,
-           "fields": {
-               "reference": "AG_001",
-               "name": "Organic Olive Oil",
-               "product_range": 1,
-               "is_modified": false,
-               "created_by": 1,
-               "created_at": "2024-10-03T10:00:00Z",
-               "updated_at": "2024-10-03T10:00:00Z"
-           }
-       },
-       {
-           "model": "products.product",
-           "pk": 2,
-           "fields": {
-               "reference": "PE_001",
-               "name": "Luxury Perfume",
-               "product_range": 2,
-               "is_modified": true,
-               "created_by": 1,
-               "created_at": "2024-10-03T12:00:00Z",
-               "updated_at": "2024-10-03T12:00:00Z"
-           }
-       }
-   ]
+        [
+        {
+            "model": "products.product",
+            "pk": 1,
+            "fields": {
+            "reference": "AG_00CH000",
+            "name": "Organic Olive Oil",
+            "product_range": 1,
+            "site": null,
+            "is_modified": false,
+            "version_number": 1,
+            "created_at": "2024-10-03T10:00:00Z",
+            "updated_at": "2024-10-03T10:00:00Z",
+            "stl_file": "1HgWFA398Auu0PerCeZhuFcgeKFLZGmGQ"
+            }
+        },
+        {
+            "model": "products.productrange",
+            "pk": 1,
+            "fields": {
+            "name": "Fruits & Vegetables",
+            "category": "AG",
+            "description": "Agrifood range focusing on fresh fruits and vegetables."
+            }
+        },
+        {
+            "model": "products.productrange",
+            "pk": 2,
+            "fields": {
+            "name": "Dairy & Eggs",
+            "category": "AG",
+            "description": "Agrifood range of milk, cheese, yogurt, and egg products."
+            }
+        }
+        ]
    ```
 
 4. Vérifiez que les données sont bien chargées en consultant la liste des produits dans l'interface d'administration ou sur la page d'accueil.
@@ -195,6 +187,7 @@ Pour initialiser la base de données avec des données de test, suivez ces étap
 - Consultez la **liste des produits** à l'URL `http://127.0.0.1:8000/products/`.
 - Ajoutez de nouveaux produits via l'URL `http://127.0.0.1:8000/add/`.
 - Consultez le **détail d'un produit** spécifique en accédant à `http://127.0.0.1:8000/products/<product_id>/`.
+- ...
 
 ## Accès à l'Interface d'Administration
 1. Connectez-vous à l'interface d'administration via :
@@ -205,6 +198,7 @@ Pour initialiser la base de données avec des données de test, suivez ces étap
 
 2. Utilisez le nom d'utilisateur et le mot de passe du superutilisateur que vous avez créés pour vous connecter.
 3. Vous pourrez alors ajouter, modifier et supprimer des produits et des gammes de produits.
+4. ...
 
 ## Fonctionnalités Implémentées
 1. **Tableau de Bord** : Affiche le résumé des produits disponibles.
